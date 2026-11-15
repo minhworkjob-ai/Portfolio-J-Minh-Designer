@@ -20,9 +20,11 @@ a{color:var(--fg);text-decoration:none}
 .o{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:0}
 .star{width:44px;height:44px;color:var(--red);flex:none}
 
-h1,h2,h3,.mega,.menu a,.modal h3,.btn,.del,.menubtn,.meta .no,.secbar,.topbar{font-family:"Bai Jamjuree","Inter Tight",sans-serif}
-.mega,.ph h1,article h1,.login h1{font-weight:600}
-.menu a,h2.sec,.meta h3,article h2,.modal h3{font-weight:600}
+/* tiêu đề: Inter Tight (gần PP Neue Montreal của trang mẫu); Bai Jamjuree chỉ cho nút và nhãn nhỏ */
+.btn,.del,.menubtn,.meta .no,.secbar,.topbar{font-family:"Bai Jamjuree","Inter Tight",sans-serif}
+h1,h2,h3,.mega,.menu a,.modal h3{font-family:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif}
+.mega,.ph h1,article h1,.login h1{font-weight:500}
+.menu a,h2.sec,.meta h3,article h2,.modal h3{font-weight:500}
 /* thanh trên */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;padding:14px 20px;font-size:15px;letter-spacing:.01em;text-transform:uppercase;mix-blend-mode:difference;color:#fff;pointer-events:none}
 .topbar a{pointer-events:auto;color:#fff}
