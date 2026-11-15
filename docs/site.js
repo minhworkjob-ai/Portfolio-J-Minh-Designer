@@ -46,11 +46,12 @@
 
   // ---- menu ----
   const menu = $('#menu'), btn = $('#menubtn');
-  if (btn) btn.onclick = () => { const on = menu.classList.toggle('on'); $('span', btn).textContent = on ? 'Đóng' : 'Menu'; };
-  addEventListener('keydown', e => { if (e.key === 'Escape' && menu) { menu.classList.remove('on'); if (btn) $('span', btn).textContent = 'Menu'; } });
+  const setMenu = on => { if (!menu) return; menu.classList.toggle('on', on); if (btn) { btn.classList.toggle('open', on); btn.setAttribute('aria-expanded', on); } document.body.style.overflow = on ? 'hidden' : ''; };
+  if (btn) btn.onclick = () => setMenu(!menu.classList.contains('on'));
+  addEventListener('keydown', e => { if (e.key === 'Escape' && menu) { setMenu(false); } });
 
   // ---- một trang: menu đóng khi bấm mục; thanh điều hướng sáng theo mục đang xem ----
-  if (menu) menu.addEventListener('click', e => { if (e.target.closest('a[href*="#"]')) { menu.classList.remove('on'); if (btn) $('span', btn).textContent = 'Menu'; } });
+  if (menu) menu.addEventListener('click', e => { if (e.target.closest('a[href*="#"]')) { setMenu(false); } });
   if (PAGE === '' && $('#work') && 'IntersectionObserver' in window) {
     const links = $$('.nav-links a[data-s]');
     const spy = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) links.forEach(a => a.classList.toggle('on', a.dataset.s === en.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
@@ -70,10 +71,6 @@
     };
     document.addEventListener('click', e => { if (!e.target.closest('#fab')) { fab.classList.remove('open'); ct.setAttribute('aria-expanded', 'false'); } });
   }
-
-  // ---- thanh điều hướng: ẩn khi cuộn xuống, hiện lại khi cuộn lên ----
-  const nav = $('#nav');
-  if (nav) { let y0 = scrollY; addEventListener('scroll', () => { const y = scrollY; nav.classList.toggle('hide', y > y0 && y > 160 && !(menu && menu.classList.contains('on'))); y0 = y; }, { passive: true }); }
 
   // ---- GitHub API ----
   const API = 'https://api.github.com';

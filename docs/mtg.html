@@ -22,22 +22,27 @@ h1,h2,h3,h6,.mega,.menu a,.modal h3,.mq{font-family:"Host Grotesk VN","Bai Jamju
 .meta h3,article h2,.modal h3{font-weight:500}
 .o{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.02em}
 /* thanh điều hướng Liquid Glass: kính mờ + bão hoà màu nền, viền khúc xạ, vệt sáng bóng */
-.nav{position:fixed;top:12px;left:50%;z-index:30;transform:translateX(-50%);width:min(1180px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 7px 7px 20px;border-radius:999px;isolation:isolate;color:#fff;font:500 14px "Host Grotesk VN","Bai Jamjuree",sans-serif;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 1px 10px rgba(0,0,0,.35);background:linear-gradient(120deg,rgba(255,255,255,.15),rgba(255,255,255,.05) 35%,rgba(255,255,255,.03) 65%,rgba(255,255,255,.12));-webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);box-shadow:inset 0 1px 1px rgba(255,255,255,.5),inset 0 -1px 1px rgba(255,255,255,.12),inset 0 0 22px rgba(255,255,255,.07),0 10px 36px rgba(0,0,0,.38);transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .4s}
+.nav{position:fixed;top:12px;left:50%;z-index:36;transform:translateX(-50%);width:min(1180px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 6px 6px 20px;border-radius:999px;isolation:isolate;color:#fff;font:500 14px "Host Grotesk VN","Bai Jamjuree",sans-serif;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 1px 10px rgba(0,0,0,.35);background:linear-gradient(120deg,rgba(255,255,255,.15),rgba(255,255,255,.05) 35%,rgba(255,255,255,.03) 65%,rgba(255,255,255,.12));-webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);box-shadow:inset 0 1px 1px rgba(255,255,255,.5),inset 0 -1px 1px rgba(255,255,255,.12),inset 0 0 22px rgba(255,255,255,.07),0 10px 36px rgba(0,0,0,.38);transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .4s}
 .nav::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:radial-gradient(120% 160% at 12% -40%,rgba(255,255,255,.38),transparent 46%),radial-gradient(90% 140% at 100% 140%,rgba(255,255,255,.16),transparent 52%)}
 .nav::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.75),rgba(255,255,255,.06) 38%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.5));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
-.nav.hide{transform:translate(-50%,-150%);opacity:0}
 .nav a{color:#fff}
 .nav-logo{white-space:nowrap}
 .nav-links{display:flex;gap:2px}
 .nav-links a{padding:10px 16px;border-radius:999px;transition:background .3s,box-shadow .3s}
 .nav-links a:hover,.nav-links a.on{background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.08)}
 .nav-yr{padding:10px 14px;white-space:nowrap;opacity:.9}
-@media (max-width:760px){.nav-links{display:none}.nav{padding:7px 7px 7px 16px;font-size:13px}}
+@media (max-width:760px){.nav-links{display:none}.nav{padding:6px 6px 6px 16px;font-size:13px}}
+@media (max-width:480px){.nav-yr{display:none}}
 
 /* nút MENU */
-.menubtn{position:fixed;right:16px;bottom:16px;z-index:40;display:flex;align-items:center;gap:10px;background:#161615;color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:20px 26px;font:500 16px "Bai Jamjuree",sans-serif;text-transform:uppercase;cursor:pointer}
-.menubtn:hover{border-color:var(--fg)}
-.menubtn i{width:12px;height:12px;background:radial-gradient(circle,var(--red) 0 2.5px,transparent 3px) 0 0/6px 6px}
+.nav-menu{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.4);transition:background .3s}
+.nav-menu:hover{background:rgba(255,255,255,.24)}
+.nav-menu i{display:block;width:18px;height:2.5px;border-radius:2px;background:#fff;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .25s,width .3s}
+.nav-menu i:nth-child(2){width:12px;background:var(--red);align-self:flex-end;margin-right:13px}
+.nav-menu:hover i:nth-child(2){width:18px;margin-right:13px}
+.nav-menu.open i:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.nav-menu.open i:nth-child(2){opacity:0}
+.nav-menu.open i:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 .menu{position:fixed;inset:0;z-index:35;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:80px 20px 120px}
 .menu.on{display:flex}
 .menu a{display:block;font-size:clamp(44px,12vw,120px);line-height:1.02;letter-spacing:-.04em;text-transform:uppercase;padding:6px 0;border-bottom:1px solid var(--line)}
@@ -276,7 +281,7 @@ section[id],footer[id]{scroll-margin-top:84px}
 
 
 /* nút nổi: lên đầu trang + liên hệ Zalo / điện thoại */
-.fab{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:38;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:38;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .fab-b{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.22);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;padding:0;-webkit-backdrop-filter:blur(12px) saturate(170%);backdrop-filter:blur(12px) saturate(170%);box-shadow:inset 0 1px 1px rgba(255,255,255,.4),0 8px 24px rgba(0,0,0,.4);transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .3s}
 .fab-b:active{transform:scale(.92)}
 .fab-b svg{width:24px;height:24px;fill:currentColor}
@@ -318,9 +323,8 @@ section[id],footer[id]{scroll-margin-top:84px}
 </style></head><body data-pid="mtg">
 <nav class="nav" id="nav" aria-label="Điều hướng"><a class="nav-logo" href="index.html">J Minh Designer</a>
 <div class="nav-links"><a href="index.html#work" data-s="work"><svg class="ic ic-work" viewBox="0 0 48 48" aria-hidden="true"><path class="l3" d="M24 4 44 14 24 24 4 14z"/><path class="l2" d="M24 20 44 30 24 40 4 30z" opacity=".75"/><path class="l1" d="M24 28 44 38 24 48 4 38z" opacity=".5"/></svg>Dự án</a><a href="index.html#brands" data-s="brands" class="on"><svg class="ic ic-brands" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13v22L24 45 6 35V13z" opacity=".35"/><path class="g" d="M24 10 36 17v14l-12 7-12-7V17z"/><circle cx="24" cy="24" r="4.5" fill="var(--bg)"/></svg>Thương hiệu</a><a href="index.html#products" data-s="products"><svg class="ic ic-products" viewBox="0 0 48 48" aria-hidden="true"><rect class="a" x="5" y="5" width="17" height="17" rx="5"/><rect class="b" x="26" y="5" width="17" height="17" rx="5"/><rect class="c" x="5" y="26" width="17" height="17" rx="5"/><rect class="d" x="26" y="26" width="17" height="17" rx="5"/></svg>Sản phẩm</a><a href="#contact" data-s="contact"><svg class="ic ic-contact" viewBox="0 0 48 48" aria-hidden="true"><path class="pl" d="M45 4 3 21l14 6 4 15 6-9 9 7z"/><path d="M45 4 17 27" stroke="var(--bg)" stroke-width="2" fill="none"/></svg>Liên hệ</a></div>
-<span class="nav-yr">P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span> 2026</span></nav>
+<span class="nav-yr">P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span> 2026</span><button class="nav-menu" id="menubtn" type="button" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button></nav>
 <div class="menu" id="menu"><a href="index.html#brands" style="--i:0">Thương hiệu</a><a href="index.html#products" style="--i:1">Sản phẩm</a><a href="signup.html" style="--i:2">Tài khoản</a><a href="admin.html" id="menu-admin" style="--i:3">Quản trị</a><a href="trash.html" id="menu-trash" style="display:none;--i:4">Thùng rác</a><small style="--i:5">Thiết kế nhận diện thương hiệu và ấn phẩm, từ ý tưởng đến sản phẩm hoàn thiện.</small></div>
-<button class="menubtn" id="menubtn" aria-label="Menu"><i></i><span>Menu</span></button>
 <div class="wrap"><a class="back" href="index.html">← Tất cả dự án</a><article>
 <h1>MTG</h1><p class="lead">MTG là thương hiệu thành viên của <span>Wiinvent Brand</span>. Icon hai khối mũi tên chéo xanh gradient; chữ &quot;MTG&quot; giãn rộng kiểu công nghệ, xám (bản sáng) hoặc trắng (bản tối). Màu chính bắt đầu từ <i class="sw" style="background:#1668B0"></i><code>#1668B0</code>; bộ logo theo khuôn chung ở <a href="he-logo-brands-family.html">Hệ Logo Brands Family</a>.</p><figure><img src="assets/mtg.png" alt="mtg.png" loading="lazy"></figure><h3>Logo</h3><p>Icon hai khối mũi tên chéo xanh gradient; chữ &quot;MTG&quot; giãn rộng kiểu công nghệ, xám (bản sáng) hoặc trắng (bản tối).</p><h3>Màu (bảng nhận diện (IDENTITY VISUAL))</h3><div class="tw"><table><thead><tr><th>Mã</th><th>Vai trò</th></tr></thead><tbody><tr><td><i class="sw" style="background:#1668B0"></i><code>#1668B0</code></td><td>xanh</td></tr><tr><td><i class="sw" style="background:#1F80C3"></i><code>#1F80C3</code></td><td>xanh sáng</td></tr><tr><td><i class="sw" style="background:#5E5E5D"></i><code>#5E5E5D</code></td><td>xám đậm</td></tr><tr><td><i class="sw" style="background:#929191"></i><code>#929191</code></td><td>xám</td></tr></tbody></table></div><h3>Font</h3><p>Inter (Bold, Medium); thư mục font Neue Machina. Barlow trong file là font của mẫu bảng trình bày.</p><h3>Biến thể logo</h3><p>Light Mode, Dark Mode; SVG <code>Group</code>. Quy ước chung: <a href="he-logo-brands-family.html">Hệ Logo Brands Family</a>.</p></article></div>
 <footer class="ft" id="contact"><div class="ftbox">
@@ -333,5 +337,5 @@ section[id],footer[id]{scroll-margin-top:84px}
 <div class="fab" id="fab" data-solo="1"><div class="fab-m"></div>
 <button class="fab-b fab-c" id="fabc" type="button" aria-label="Liên hệ" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6 2 11c0 2.600 1.200 4.900 3.100 6.600L4 22l4.700-2.100c1 .3 2.100.4 3.300.4 5.500 0 10-4 10-9S17.500 2 12 2z"/></svg></button>
 <button class="fab-b fab-up" id="fabup" type="button" aria-label="Lên đầu trang"><svg viewBox="0 0 24 24"><path d="M12 3 3 13h5v8h8v-8h5z"/></svg></button></div>
-<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs","title":"J Minh Designer","firebase":{"apiKey":"","authDomain":"","projectId":"","appId":""},"v":"mwi50784","car":{}};</script><script src="site.js?v=mwi50784" defer></script><script src="fx.js?v=mwi50784" defer></script><script src="carousel.js?v=mwi50784" defer></script>
+<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs","title":"J Minh Designer","firebase":{"apiKey":"","authDomain":"","projectId":"","appId":""},"v":"mwi56vs6","car":{}};</script><script src="site.js?v=mwi56vs6" defer></script><script src="fx.js?v=mwi56vs6" defer></script><script src="carousel.js?v=mwi56vs6" defer></script>
 </body></html>
