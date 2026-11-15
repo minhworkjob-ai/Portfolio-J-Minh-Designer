@@ -278,7 +278,7 @@ function footer(cfg) {
   const left = [], right = [];
   if (c.phone) left.push(`<div><small>Điện thoại</small>${roll('tel:' + String(c.phone).replace(/\s/g, ''), c.phone)}</div>`);
   if (c.email) left.push(`<div><small>Email</small>${roll('mailto:' + c.email, c.email)}</div>`);
-  for (const [k, lab] of [['linkedin', 'LinkedIn'], ['behance', 'Behance'], ['instagram', 'Instagram'], ['facebook', 'Facebook']])
+  for (const [k, lab] of [['behance', 'Behance']])   // chân trang chỉ hiện email, điện thoại, Behance
     if (c[k]) right.push(`<div><small>${lab}</small>${roll(c[k], c[k].replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''), true)}</div>`);
   if (!left.length) left.push(`<div><small>Xem</small>${roll('index.html', 'Thương hiệu')}</div><div><small>Xem</small>${roll('gallery.html', 'Sản phẩm')}</div>`);
   if (!right.length) right.push(`<div><small>Cập nhật</small>${esc(new Date().toLocaleDateString('vi-VN'))}</div>`);
