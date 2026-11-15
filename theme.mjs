@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { esc, fancy, mixTitle, emptyEdits, normEdits } from './render.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
+const V = Date.now().toString(36);   // số phiên bản cho script: mỗi lần build trình duyệt tải bản mới
 export { fancy, mixTitle };
 
 const STAR = `<svg class="star" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 0l2.4 19.6L48 24l-21.6 4.4L24 48l-2.4-19.6L0 24l21.6-4.4z" fill="currentColor"/></svg>`;
@@ -293,7 +294,7 @@ function footer(cfg) {
 export const pageHead = (title, sub = '') => `<div class="wrap"><header class="ph"><h1>${fancy(title)}</h1>${sub ? `<p>${esc(sub)}</p>` : ''}</header></div>`;
 
 export function shell(cfg, title, desc, inner, active = 'brands', extra = {}) {
-  const site = JSON.stringify({ repo: cfg.repo, branch: cfg.branch || 'main', out: cfg.out || 'docs', title: cfg.title, firebase: cfg.firebase || {} });
+  const site = JSON.stringify({ repo: cfg.repo, branch: cfg.branch || 'main', out: cfg.out || 'docs', title: cfg.title, firebase: cfg.firebase || {}, v: V });
   return `<!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
@@ -307,7 +308,7 @@ ${inner}
 ${footer(cfg)}
 <div class="adminbar" id="adminbar">Chế độ quản trị · <a href="admin.html" style="text-decoration:underline">Tài khoản</a></div>
 <div class="toast" id="toast"></div>
-<script>window.SITE=${site};</script><script src="site.js" defer></script><script src="fx.js" defer></script><script src="carousel.js" defer></script>
+<script>window.SITE=${site};</script><script src="site.js?v=${V}" defer></script><script src="fx.js?v=${V}" defer></script><script src="carousel.js?v=${V}" defer></script>
 </body></html>`;
 }
 

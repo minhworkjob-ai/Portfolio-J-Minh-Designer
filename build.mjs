@@ -273,7 +273,7 @@ fs.writeFileSync(path.join(OUT, 'signup.html'), shell('Tài khoản · ' + cfg.t
 <li>Authentication → Settings → Authorized domains → thêm <code>${esc(cfg.repo.split("/")[0])}.github.io</code>.</li>
 <li>Project settings → Your apps → Web (&lt;/&gt;) → chép đoạn <code>firebaseConfig</code> vào mục <code>firebase</code> trong <code>site.config.json</code> (apiKey, authDomain, projectId, appId), rồi chạy <code>node build.mjs</code> và đẩy lên GitHub.</li></ol></div>
 </div></div>
-<script type="module" src="auth.js"></script>`, 'account'));
+<script type="module" src="auth.js?v=${Date.now().toString(36)}"></script>`, 'account'));
 fs.writeFileSync(path.join(OUT, 'trash.html'), shell('Thùng rác · ' + cfg.title, 'Thùng rác', `${pageHead('Thùng rác', 'Mục đã xoá được giữ 15 ngày, sau đó bị xoá hẳn. Chỉ chủ website xem được.')}<div class="wrap"><div class="secbar"><span>Đã xoá</span><span id="trashcount"></span></div><div id="trashlist"><p class="sub">Đang tải…</p></div><div style="height:60px"></div></div>`));
 
 // trang chi tiết

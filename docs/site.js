@@ -133,7 +133,7 @@
   // =====================================================================
   //  Hiển thị: dự án (thẻ có sẵn trong trang) + nhóm sản phẩm (dựng từ gallery.json)
   // =====================================================================
-  const rendererP = (PAGE === 'gallery' || PAGE === 'group') ? import('./render.js') : null;
+  const rendererP = (PAGE === 'gallery' || PAGE === 'group') ? import('./render.js?v=' + (S.v || '')) : null;
   const getJson = async f => { try { const r = await fetch(f + '?t=' + Date.now()); return r.ok ? r.json() : null; } catch { return null; } };
 
   const slugOf = c => c.dataset.id.slice(2);
