@@ -1,0 +1,42 @@
+{
+  "title": "Portfolio Thiết Kế",
+  "subtitle": "Sản phẩm thiết kế và bộ nhận diện các thương hiệu",
+  "vault": "../Obsidian Vault",
+  "include": [
+    "wiki/Wiivent Project/Thương Hiệu Thành Viên"
+  ],
+  "excludeNamePrefixes": [
+    "Nguồn"
+  ],
+  "stripSections": [
+    "File gốc trên máy",
+    "Nguồn tham khảo",
+    "Liên quan",
+    "Ghi chú",
+    "Mâu thuẫn",
+    "Đối thủ",
+    "Lỗi trên bảng cần biết"
+  ],
+  "out": "docs",
+  "gallery": {
+    "title": "Sản phẩm thiết kế",
+    "source": "../Infigate_Job/Pub_Design",
+    "extensions": [
+      "jpg",
+      "jpeg",
+      "png",
+      "webp",
+      "tif",
+      "tiff"
+    ],
+    "excludeNameRegex": "bao-?gia|ke-?hoach|report|ve-may-bay|ticket|demo-man-hinh-app-lm|chu-?ky|^2026-01-10-10-|mau-125g60m|tem-qr|nguyen-huu-trung",
+    "excludeBasenames": [
+      "z7018256143352_2f7228465838f979c3dcf966bec1b090.jpg",
+      "z701821831027.jpg",
+      "z7018218039653_5c1f4e730d8a7b7d1bf2e524283ef9db.jpg",
+      "z701821893b5f.jpg",
+      "Ticket.jpg",
+      "Ve-may-bay.jpg"
+    ]
+  }
+}
