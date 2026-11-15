@@ -1,21 +1,20 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MTG · J Minh Designer</title><meta name="description" content="MTG là thương hiệu thành viên của Wiinvent Brand. Icon hai khối mũi tên chéo xanh gradient; chữ &quot;MTG&quot; giãn rộng kiểu công nghệ, xám (bản sáng) hoặc trắng (bản tối). Màu chính bắt đầu từ #1668B0; bộ logo theo khuôn chung ở Hệ Logo Brands Family.">
-<meta name="theme-color" content="#0b0b0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Inter+Tight:wght@400;500;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0b0b0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
 <script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('fx');setTimeout(function(){if(!window.__fx)document.documentElement.classList.add('fx-off')},4000)}</script>
 <style>
 :root{--bg:#0b0b0b;--fg:#e7e1d7;--mut:#8d887f;--card:#151514;--line:#2b2a27;--red:#ff1d12;--paper:#f1ede4}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 "Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 "Hanken Grotesk","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--fg);text-decoration:none}
 ::selection{background:var(--red);color:#fff}
 .wrap{max-width:1280px;margin:0 auto;padding:0 20px}
 .o{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:0}
 .star{width:44px;height:44px;color:var(--red);flex:none}
 
-/* tiêu đề: Inter Tight (gần PP Neue Montreal của trang mẫu); Bai Jamjuree chỉ cho nút và nhãn nhỏ */
-.btn,.del,.menubtn,.meta .no,.secbar,.topbar{font-family:"Bai Jamjuree","Inter Tight",sans-serif}
-h1,h2,h3,.mega,.menu a,.modal h3{font-family:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif}
+/* một họ chữ duy nhất như trang mẫu: Hanken Grotesk (gần PP Neue Montreal, có đủ dấu tiếng Việt) */
+h1,h2,h3,.mega,.menu a,.modal h3{font-family:"Hanken Grotesk","Helvetica Neue",Helvetica,Arial,sans-serif}
 .mega,.ph h1,article h1,.login h1{font-weight:500}
 .menu a,h2.sec,.meta h3,article h2,.modal h3{font-weight:500}
 /* thanh trên */
@@ -23,7 +22,7 @@ h1,h2,h3,.mega,.menu a,.modal h3{font-family:"Inter Tight","Helvetica Neue",Helv
 .topbar a{pointer-events:auto;color:#fff}
 
 /* nút MENU */
-.menubtn{position:fixed;right:16px;bottom:16px;z-index:40;display:flex;align-items:center;gap:10px;background:#161615;color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:20px 26px;font:500 16px "Inter Tight",sans-serif;text-transform:uppercase;cursor:pointer}
+.menubtn{position:fixed;right:16px;bottom:16px;z-index:40;display:flex;align-items:center;gap:10px;background:#161615;color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:20px 26px;font:500 16px "Hanken Grotesk",sans-serif;text-transform:uppercase;cursor:pointer}
 .menubtn:hover{border-color:var(--fg)}
 .menubtn i{width:12px;height:12px;background:radial-gradient(circle,var(--red) 0 2.5px,transparent 3px) 0 0/6px 6px}
 .menu{position:fixed;inset:0;z-index:35;background:var(--bg);display:none;flex-direction:column;justify-content:center;padding:80px 20px 120px}
@@ -112,14 +111,14 @@ h3.album{margin:34px 0 8px;font-size:14px;color:var(--mut);text-transform:upperc
 .login input[type=password],.login input[type=text]{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--fg);padding:16px;font:16px ui-monospace,Menlo,monospace}
 .login input:focus{outline:none;border-color:var(--red)}
 .login .row{display:flex;gap:10px;align-items:center;margin-top:14px;color:var(--mut);font-size:14px}
-.btn{display:inline-flex;align-items:center;gap:10px;margin-top:22px;background:var(--red);color:#fff;border:0;border-radius:12px;padding:16px 26px;font:600 15px "Inter Tight",sans-serif;text-transform:uppercase;cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:10px;margin-top:22px;background:var(--red);color:#fff;border:0;border-radius:12px;padding:16px 26px;font:600 15px "Hanken Grotesk",sans-serif;text-transform:uppercase;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--fg)}
 .btn:disabled{opacity:.5;cursor:wait}
 .msg{margin-top:18px;font-size:15px}
 .msg.err{color:#ff7a70}.msg.ok{color:#8fe08f}
 .login ol{padding-left:20px;color:var(--mut);font-size:15px}
 .login ol a{color:var(--red)}
-.del{display:none;position:absolute;top:8px;right:8px;z-index:5;background:var(--red);color:#fff;border:0;border-radius:8px;padding:7px 12px;font:600 12px "Inter Tight",sans-serif;text-transform:uppercase;cursor:pointer}
+.del{display:none;position:absolute;top:8px;right:8px;z-index:5;background:var(--red);color:#fff;border:0;border-radius:8px;padding:7px 12px;font:600 12px "Hanken Grotesk",sans-serif;text-transform:uppercase;cursor:pointer}
 body.admin .del{display:block}
 .adminbar{display:none;position:fixed;left:16px;bottom:16px;z-index:40;background:var(--red);color:#fff;border-radius:12px;padding:12px 16px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
 body.admin .adminbar{display:block}
@@ -139,7 +138,7 @@ body.admin .adminbar{display:block}
 /* sửa tên, sắp xếp, gộp, chuyển (chỉ khi đăng nhập) */
 .ctl{display:none;position:absolute;top:8px;left:8px;z-index:5;gap:4px;flex-wrap:wrap;max-width:calc(100% - 90px)}
 body.admin .ctl{display:flex}
-.ctl button,.pgbtn{background:rgba(11,11,11,.9);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:600 12px "Bai Jamjuree","Inter Tight",sans-serif;cursor:pointer;text-transform:uppercase}
+.ctl button,.pgbtn{background:rgba(11,11,11,.9);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:600 12px "Hanken Grotesk",sans-serif;cursor:pointer;text-transform:uppercase}
 .ctl button:hover,.pgbtn:hover{border-color:var(--fg)}
 .gtools{display:none;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
 body.admin .gtools{display:flex}
@@ -152,7 +151,7 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 .dragging{opacity:.35}
 .dropb{box-shadow:-5px 0 0 var(--red)}.dropa{box-shadow:5px 0 0 var(--red)}
 .dropb.y{box-shadow:0 -5px 0 var(--red)}.dropa.y{box-shadow:0 5px 0 var(--red)}
-.fld{width:100%;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--fg);padding:13px;font:16px "Inter Tight",sans-serif}
+.fld{width:100%;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--fg);padding:13px;font:16px "Hanken Grotesk",sans-serif}
 .fld:focus{outline:none;border-color:var(--red)}
 .del-page,.ren-page{margin-right:10px}
 
@@ -180,13 +179,13 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 @media (prefers-reduced-motion:reduce){.star{animation:none}.menu.on a,.menu.on small{animation:none}}
 
 /* đăng ký / đăng nhập thành viên */
-.login input[type=email]{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--fg);padding:16px;font:16px "Inter Tight",sans-serif}
+.login input[type=email]{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--fg);padding:16px;font:16px "Hanken Grotesk",sans-serif}
 .login input[type=email]:focus{outline:none;border-color:var(--red)}
-.login input[type=text]:not(#tok){font-family:"Inter Tight",sans-serif}
+.login input[type=text]:not(#tok){font-family:"Hanken Grotesk",sans-serif}
 .tabs{display:flex;gap:6px;margin:6px 0 4px;border:1px solid var(--line);border-radius:12px;padding:4px}
-.tabs button{flex:1;background:none;border:0;color:var(--mut);padding:11px;border-radius:9px;font:600 14px "Bai Jamjuree","Inter Tight",sans-serif;text-transform:uppercase;cursor:pointer}
+.tabs button{flex:1;background:none;border:0;color:var(--mut);padding:11px;border-radius:9px;font:600 14px "Hanken Grotesk",sans-serif;text-transform:uppercase;cursor:pointer}
 .tabs button.on{background:var(--fg);color:#0b0b0b}
-.sbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:12px;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:15px;font:600 15px "Inter Tight",sans-serif;cursor:pointer}
+.sbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:12px;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:15px;font:600 15px "Hanken Grotesk",sans-serif;cursor:pointer}
 .sbtn:hover{border-color:var(--fg)}.sbtn svg{width:20px;height:20px}
 .sbtn:disabled,.login .btn:disabled{opacity:.5;cursor:wait}
 .or{display:flex;align-items:center;gap:12px;margin:26px 0 0;color:var(--mut);font-size:13px;text-transform:uppercase;letter-spacing:.05em}
