@@ -5,7 +5,7 @@
   window.__fx = 1;
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const SPLIT = '.mega, .ph h1, article h1, h2.sec, .login h1';
-  const REVEAL = '.card, .trow, .secbar, .tag, .lead, .masonry a, .album, .gc-head, .gc-stage, .ftrow, .ftcol';
+  const REVEAL = '.card, .trow, .secbar, .tag, .lead, .masonry a, .album, .ftrow, .ftcol';
 
   // ---- tách chữ: từng ký tự nằm trong một khung che, trượt lên khi vào màn hình ----
   function split(el) {
@@ -63,17 +63,4 @@
     addEventListener('scroll', () => { tgt = Math.min(scrollY, innerHeight * 1.5); if (!raf) raf = requestAnimationFrame(tick); }, { passive: true });
   }
 
-  // ---- con trỏ: chấm tròn đỏ đi theo chuột, to lên khi chạm vào liên kết (chỉ máy có chuột) ----
-  if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
-    const dot = document.createElement('div'); dot.className = 'cursor-dot'; document.body.appendChild(dot);
-    let x = 0, y = 0, cx = 0, cy = 0, on = false;
-    addEventListener('mousemove', e => { x = e.clientX; y = e.clientY; if (!on) { on = true; cx = x; cy = y; dot.classList.add('on'); } });
-    document.addEventListener('mouseleave', () => { on = false; dot.classList.remove('on'); });
-    (function loop() {
-      cx += (x - cx) * 0.2; cy += (y - cy) * 0.2;
-      dot.style.transform = `translate3d(${cx}px,${cy}px,0) translate(-50%,-50%)`;
-      requestAnimationFrame(loop);
-    })();
-    document.addEventListener('mouseover', e => dot.classList.toggle('big', !!(e.target.closest && e.target.closest('a,button,.card,input,select'))));
-  }
 })();

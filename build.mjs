@@ -6,7 +6,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { shell as themeShell, hero, pageHead, mixTitle, carousel, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
+import { execFileSync } from 'node:child_process';
+import { shell as themeShell, secHead, ICONS, hero, pageHead, mixTitle, carousel, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'site.config.json'), 'utf8'));
@@ -203,6 +204,17 @@ function prepare(p) {
   p.plainTldr = tldr.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, a, b) => b || a).replace(/[`*]/g, '');
 }
 pages.forEach(prepare);
+// ảnh nhỏ cho thẻ và carousel (nhẹ hơn nhiều so với ảnh gốc); cần `sips` (có sẵn trên macOS), không có thì dùng ảnh gốc
+fs.mkdirSync(path.join(OUT, 'thumbs'), { recursive: true });
+for (const p of pages) {
+  p.thumb = p.cover;
+  if (!p.cover) continue;
+  const src = path.join(OUT, p.cover), name = path.basename(p.cover), dst = path.join(OUT, 'thumbs', name);
+  try {
+    if (!fs.existsSync(dst) || fs.statSync(dst).mtimeMs < fs.statSync(src).mtimeMs) execFileSync('sips', ['-Z', '720', src, '--out', dst], { stdio: 'ignore' });
+    p.thumb = 'thumbs/' + name;
+  } catch { /* không có sips: giữ ảnh gốc */ }
+}
 // chỉnh sửa của chủ web: tên hiển thị và thứ tự
 for (const p of pages) if (EDITS.brandNames[p.slug]) { p.title = EDITS.brandNames[p.slug]; }
 {
@@ -215,19 +227,30 @@ for (const p of pages) if (EDITS.brandNames[p.slug]) { p.title = EDITS.brandName
 
 const shell = (title, desc, inner) => themeShell(cfg, title, desc, inner, 'brands');
 
+// phần "Sản phẩm" của trang chủ: 8 nhóm mới nhất, đọc từ gallery.json do gallery.mjs tạo
+let galleryCards = '', galleryTotal = 0;
+try {
+  const gj = JSON.parse(fs.readFileSync(path.join(OUT, 'gallery.json'), 'utf8'));
+  const live = gj.groups.filter(g => !DEL.months.includes(g.key)).map(g => ({ ...g, items: g.items.filter(it => !DEL.images.includes(it.id)) })).filter(g => g.items.length);
+  galleryTotal = live.reduce((n, g) => n + g.items.length, 0);
+  galleryCards = live.slice(0, 8).map(g => `<a class="pc" href="group.html?k=${esc(g.key)}"><img src="gallery/${esc(g.items[0].id)}-t.jpg" alt="${esc(g.label)}" loading="lazy" decoding="async"><span>${esc(g.label)}<small>${g.items.length} ấn phẩm</small></span></a>`).join('');
+} catch { galleryCards = '<p class="sub">Chạy node gallery.mjs để có phần này.</p>'; }
+
 // trang chủ
 const cards = pages.map((p, i) => `
 <a class="card" href="${p.slug}.html" data-id="p:${p.slug}" data-files="${p.slug}.html" data-label="${esc(p.title)}" data-q="${esc((p.title + ' ' + p.plainTldr).toLowerCase())}">
-  <div class="thumb${p.cover ? '' : ' empty'}">${p.cover ? `<img src="${p.cover}" alt="${esc(p.title)}" loading="lazy">` : esc(p.title[0] || '?')}</div>
+  <div class="thumb${p.cover ? '' : ' empty'}">${p.cover ? `<img src="${p.thumb || p.cover}" alt="${esc(p.title)}" loading="lazy" decoding="async">` : esc(p.title[0] || '?')}</div>
   <div class="meta"><span class="no">${String(i + 1).padStart(2, '0')}/${String(pages.length).padStart(2, '0')}</span><h3>${esc(p.title)}</h3><p>${esc(p.plainTldr)}</p>
   <div class="dots">${p.hexes.map(h => `<i style="background:${h}" title="${h}"></i>`).join('')}</div></div>
 </a>`).join('');
 const home = shell(cfg.title, cfg.subtitle, `
 ${hero(cfg)}
-${carousel(pages.filter(p => p.cover).map(p => ({ slug: p.slug, href: p.slug + '.html', title: p.title, cover: p.cover, fit: 'contain', bg: '#f1ede4',
+${carousel(pages.filter(p => p.cover).map(p => ({ slug: p.slug, href: p.slug + '.html', title: p.title, cover: p.thumb || p.cover, thumb: p.thumb || p.cover, fit: 'contain', bg: '#f1ede4',
   tags: ((Array.isArray(p.fm.tags) ? p.fm.tags : []).filter(t => !/^(wiki|wiivent|thực-thể|thuc-the)$/i.test(t)).slice(0, 2).map(t => t.replace(/-/g, ' ')).join(' / ')) || 'Nhận diện thương hiệu' })))}
-<div class="wrap" id="brands"><div class="secbar"><span>Thương hiệu</span><input id="q" type="search" placeholder="Tìm thương hiệu…" aria-label="Tìm"><span id="n">${pages.length} dự án</span></div>
-<main class="grid" id="g">${cards}</main></div>
+<section class="sect" id="brands"><div class="wrap">${secHead('brands', 'Thương hiệu', `<div class="sec-r"><input id="q" type="search" placeholder="Tìm thương hiệu…" aria-label="Tìm"><span id="n">${pages.length} dự án</span></div>`)}
+<main class="grid" id="g">${cards}</main></div></section>
+<section class="sect" id="products"><div class="wrap">${secHead('products', 'Sản phẩm', `<div class="sec-r"><span>${galleryTotal} ấn phẩm</span></div>`)}
+<div class="pgrid">${galleryCards}</div><a class="more" href="gallery.html">Xem tất cả sản phẩm →</a></div></section>
 <script>
 const q=document.getElementById('q'),n=document.getElementById('n'),cs=[...document.querySelectorAll('.card')];
 q.addEventListener('input',()=>{const v=q.value.trim().toLowerCase();let c=0;cs.forEach(e=>{const ok=!v||e.dataset.q.includes(v);e.style.display=ok?'':'none';if(ok)c++});n.textContent=c+' dự án'});
@@ -286,7 +309,7 @@ for (const p of pages) {
 // báo file cũ không còn được tạo (không tự xoá)
 const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'render.js', 'fx.js', 'carousel.js', 'auth.js', 'signup.html', 'hero.svg', 'deleted.json', 'edits.json', 'gallery.json', 'group.html', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
 const stale = [];
-(function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-|fonts\/)/.test(r)) stale.push(r); } })(OUT);
+(function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-|fonts\/|thumbs\/)/.test(r)) stale.push(r); } })(OUT);
 if (stale.length) console.log('File cũ có thể xoá tay:', stale.join(', '));
 console.log(`Đã tạo ${pages.length} trang và ${fs.readdirSync(ASSETS).length} ảnh trong ${path.relative(ROOT, OUT)}/`);
 for (const p of pages) console.log(' -', p.name);
