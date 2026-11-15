@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { shell as themeShell, hero, pageHead, writeSiteAssets, readDeleted } from './theme.mjs';
+import { shell as themeShell, hero, pageHead, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'site.config.json'), 'utf8'));
@@ -14,6 +14,7 @@ const VAULT = path.resolve(process.env.VAULT || path.resolve(ROOT, cfg.vault));
 const OUT = path.join(ROOT, cfg.out);
 const ASSETS = path.join(OUT, 'assets');
 const DEL = readDeleted(OUT);
+const EDITS = readEdits(OUT);
 
 if (!fs.existsSync(path.join(VAULT, '.obsidian'))) {
   console.error('Không thấy vault Obsidian tại:', VAULT);
@@ -202,6 +203,13 @@ function prepare(p) {
   p.plainTldr = tldr.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, a, b) => b || a).replace(/[`*]/g, '');
 }
 pages.forEach(prepare);
+// chỉnh sửa của chủ web: tên hiển thị và thứ tự
+for (const p of pages) if (EDITS.brandNames[p.slug]) { p.title = EDITS.brandNames[p.slug]; }
+{
+  const rank = new Map(EDITS.brandOrder.map((k, i) => [k, i])), at = new Map(pages.map((p, i) => [p, i]));
+  const rk = p => rank.has(p.slug) ? rank.get(p.slug) : 1e6 + at.get(p);
+  pages.sort((a, b) => rk(a) - rk(b));
+}
 
 // ---------- giao diện ----------
 
@@ -248,7 +256,7 @@ for (const p of pages) {
 }
 
 // báo file cũ không còn được tạo (không tự xoá)
-const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'deleted.json', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
+const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'render.js', 'deleted.json', 'edits.json', 'gallery.json', 'group.html', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
 const stale = [];
 (function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-)/.test(r)) stale.push(r); } })(OUT);
 if (stale.length) console.log('File cũ có thể xoá tay:', stale.join(', '));

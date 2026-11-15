@@ -7,7 +7,8 @@ import crypto from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { shell as themeShell, fancy, pageHead, writeSiteAssets, readDeleted } from './theme.mjs';
+import { shell as themeShell, fancy, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
+import { compute, indexHtml } from './render.js';
 
 const ex = promisify(execFile);
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -22,6 +23,7 @@ const START = Date.now();
 fs.mkdirSync(IMG, { recursive: true });
 writeSiteAssets(OUT);
 const DEL = readDeleted(OUT);
+const EDITS = readEdits(OUT);
 if (!fs.existsSync(SRC)) { console.error('Không thấy thư mục nguồn:', SRC); process.exit(1); }
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -73,11 +75,14 @@ const usedIds = new Set(Object.values(cache).map(v => v.id));
 const seenHash = new Map();
 const todo = [];
 const entries = [];
+let skipped = 0;
+const isDeleted = (rel, c) => (c && DEL.images.includes(c.id)) || DEL.months.includes(slugify(describe(rel).key));
 for (const f of files) {
   const rel = path.relative(SRC, f);
   const st = fs.statSync(f);
   let c = cache[rel];
-  if (c && DEL.images.includes(c.id)) continue;
+  // mục đã xoá: giữ thông tin để còn khôi phục được, không nén lại
+  if (isDeleted(rel, c)) { if (c) entries.push({ rel, ...c }); else skipped++; continue; }
   const fresh = c && c.size === st.size && c.mtimeMs === st.mtimeMs && fs.existsSync(path.join(IMG, c.id + '.jpg')) && fs.existsSync(path.join(IMG, c.id + '-t.jpg'));
   if (!fresh) { todo.push({ f, rel, st }); continue; }
   entries.push({ rel, ...c });
@@ -105,61 +110,56 @@ async function work({ f, rel, st }) {
 const queue = [...todo]; 
 await Promise.all(Array.from({ length: 4 }, async () => { while (queue.length && Date.now() < stopAt) await work(queue.shift()); }));
 fs.writeFileSync(CACHE_FILE, JSON.stringify(cache));
-const remaining = todo.length - done - 0;
-const pending = files.length - entries.length;
+const pending = files.length - entries.length - skipped;
 
-// bỏ ảnh trùng nội dung
+// bỏ ảnh trùng nội dung (chỉ xét ảnh còn hiển thị); ảnh đã xoá giữ riêng để khôi phục
+const kept = entries.filter(e => !isDeleted(e.rel, e)), gone = entries.filter(e => isDeleted(e.rel, e));
 const uniq = [];
-for (const e of entries) { if (DEL.images.includes(e.id) || seenHash.has(e.hash)) continue; seenHash.set(e.hash, 1); uniq.push(e); }
+for (const e of kept) { if (seenHash.has(e.hash)) continue; seenHash.set(e.hash, 1); uniq.push(e); }
+const all = [...uniq, ...gone].sort((a, b) => a.rel.localeCompare(b.rel, 'en', { numeric: true }));
 
-// dựng trang
+// nhóm theo năm / tháng -> gallery.json (trình duyệt dựng trang từ file này + edits.json)
 const cols = new Map();
-for (const e of uniq) {
+for (const e of all) {
   const d = describe(e.rel);
-  if (!cols.has(d.key)) cols.set(d.key, { ...d, items: [] });
-  cols.get(d.key).items.push({ ...e, title: d.title, album: d.album });
+  const key = slugify(d.key);
+  if (!cols.has(key)) cols.set(key, { key, label: d.label, order: d.order, items: [] });
+  cols.get(key).items.push({ id: e.id, title: d.title, album: d.album, w: e.w, h: e.h });
 }
-const colList = [...cols.values()].filter(c => !DEL.months.includes(slugify(c.key))).sort((a, b) => a.order - b.order);
+const groups = [...cols.values()].sort((a, b) => b.order - a.order).map(({ key, label, items }) => ({ key, label, items }));
+fs.writeFileSync(path.join(OUT, 'gallery.json'), JSON.stringify({ groups }));
+
 const LB = `<div class="lb" id="lb"><button aria-label="Đóng" id="lx">×</button><button class="nv pv" id="lp" aria-label="Trước">‹</button><img id="li" alt=""><button class="nv nx" id="ln" aria-label="Sau">›</button><p id="lc"></p></div>
 <script>
 const lb=document.getElementById('lb'),li=document.getElementById('li'),lc=document.getElementById('lc');
-let ix=0;const as=new Proxy([],{get:(t,k)=>{const l=[...document.querySelectorAll('.masonry a')];return k==='length'?l.length:l[k]}});
-function show(i){ix=(i+as.length)%as.length;li.src=as[ix].href;lc.textContent=as[ix].dataset.t+'  ('+(ix+1)+'/'+as.length+')';lb.classList.add('on')}
-as.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(!document.body.contains(a))return;const l=[...document.querySelectorAll('.masonry a')];show(l.indexOf(a))}));
+let ix=0;const list=()=>[...document.querySelectorAll('.masonry a')];
+function show(i){const l=list();if(!l.length)return;ix=(i+l.length)%l.length;li.src=l[ix].href;lc.textContent=l[ix].dataset.t+'  ('+(ix+1)+'/'+l.length+')';lb.classList.add('on')}
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('.masonry a');if(!a)return;e.preventDefault();show(list().indexOf(a))});
 document.getElementById('lx').onclick=()=>lb.classList.remove('on');
 document.getElementById('lp').onclick=()=>show(ix-1);document.getElementById('ln').onclick=()=>show(ix+1);
 lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('on')});
 addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');if(e.key==='ArrowLeft')show(ix-1);if(e.key==='ArrowRight')show(ix+1)});
 </script>`;
-const pageName = c => `g-${slugify(c.key)}.html`;
-for (const c of colList) {
-  const albums = new Map();
-  for (const it of c.items) { if (!albums.has(it.album)) albums.set(it.album, []); albums.get(it.album).push(it); }
-  let body = '';
-  for (const [name, items] of albums) {
-    body += (name ? `<h3 class="album">${esc(name)}</h3>` : '') + '<div class="masonry">' +
-      items.map(it => `<a href="gallery/${it.id}.jpg" data-t="${esc(it.title)}" data-id="i:${it.id}" data-files="gallery/${it.id}.jpg,gallery/${it.id}-t.jpg" data-label="${esc(it.title)}"><img src="gallery/${it.id}-t.jpg" width="${Math.min(it.w, 440)}" height="${Math.round(it.h * Math.min(it.w, 440) / it.w)}" alt="${esc(it.title)}" loading="lazy"></a>`).join('') + '</div>';
-  }
-  const inner = `<div class="wrap"><a class="back" href="gallery.html">← Tất cả tháng</a><article style="max-width:none;padding-top:0"><h1>${fancy(c.label)}</h1><p class="lead">${c.items.length} sản phẩm</p>${body}</article></div>${LB}`;
-  fs.writeFileSync(path.join(OUT, pageName(c)), themeShell(cfg, `${c.label} · ${G.title}`, `${c.items.length} sản phẩm thiết kế ${c.label}`, inner, 'gallery'));
+
+// trang một nhóm: một trang chung, JS đọc ?k=<khoá>
+fs.writeFileSync(path.join(OUT, 'group.html'), themeShell(cfg, `Nhóm · ${G.title}`, G.title,
+  `<div class="wrap" id="grp"><a class="back" href="gallery.html">← Tất cả nhóm</a><p class="sub" style="padding-top:24px">Đang tải…</p></div>${LB}`, 'gallery', { page: 'group' }));
+// link cũ g-<khoá>.html chuyển sang trang chung
+const hasStub = new Set();
+for (const g of groups) {
+  const f = `g-${g.key}.html`; hasStub.add(f);
+  fs.writeFileSync(path.join(OUT, f), `<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=group.html?k=${esc(g.key)}"><script>location.replace('group.html?k=${esc(g.key)}')</script>`);
 }
-const yearOf = c => (String(c.key).match(/^(\d{4})/) || [])[1] || 'Khác';
-const byYear = new Map();
-for (const c of colList) { const y = yearOf(c); if (!byYear.has(y)) byYear.set(y, []); byYear.get(y).push(c); }
-let idx = '';
-for (const [y, list] of [...byYear].sort((a, b) => b[0].localeCompare(a[0]))) {
-  idx += `<h2 class="sec">${y === 'Khác' ? 'Khác' : 'Năm ' + y}</h2><div class="cgrid">` + list.slice().sort((a, b) => b.order - a.order).map(c => {
-    const cover = c.items[0];
-    const files = [pageName(c), ...c.items.flatMap(it => [`gallery/${it.id}.jpg`, `gallery/${it.id}-t.jpg`])].join(',');
-    return `<a class="card" href="${pageName(c)}" data-id="m:${slugify(c.key)}" data-files="${files}" data-label="${esc(c.label)}"><div class="thumb"><img src="gallery/${cover.id}-t.jpg" alt="${esc(c.label)}" loading="lazy"></div><div class="meta"><h3>${esc(c.label)}</h3><p>${c.items.length} sản phẩm</p></div></a>`;
-  }).join('') + '</div>';
-}
-const home = pageHead(G.title, `${uniq.length} sản phẩm, sắp xếp theo tháng. Bấm vào một tháng để xem, bấm vào ảnh để phóng to.`) + `<div class="wrap">${idx}<div style="height:48px"></div></div>`;
-fs.writeFileSync(path.join(OUT, 'gallery.html'), themeShell(cfg, G.title, `${uniq.length} sản phẩm thiết kế`, home, 'gallery'));
+
+// trang danh sách nhóm (dựng sẵn để có nội dung ngay, JS sẽ dựng lại theo chỉnh sửa mới nhất)
+const view = compute({ groups }, DEL, EDITS);
+const home = `<div class="wrap"><header class="ph"><h1>${fancy(G.title)}</h1><p id="galsub">${view.total} sản phẩm, sắp xếp theo nhóm. Bấm vào một nhóm để xem, bấm vào ảnh để phóng to.</p></header></div><div class="wrap" id="gal">${indexHtml(view.groups)}</div>`;
+fs.writeFileSync(path.join(OUT, 'gallery.html'), themeShell(cfg, G.title, `${view.total} sản phẩm thiết kế`, home, 'gallery', { page: 'gallery' }));
 
 // chuyển file ảnh không còn dùng ra khỏi docs (không xoá)
-const live = new Set(uniq.flatMap(e => [e.id + '.jpg', e.id + '-t.jpg']));
+const live = new Set(uniq.filter(e => !isDeleted(e.rel, e)).flatMap(e => [e.id + '.jpg', e.id + '-t.jpg']));
 const parkDir = path.join(ROOT, '_to_delete', 'gallery-stale');
 for (const f of fs.readdirSync(IMG)) if (!live.has(f) && pending === 0) { fs.mkdirSync(parkDir, { recursive: true }); fs.renameSync(path.join(IMG, f), path.join(parkDir, f)); }
-console.log(`Quét ${files.length} ảnh · mới nén ${done} · hiện có ${uniq.length} ảnh duy nhất (${entries.length - uniq.length} trùng) · ${colList.length} nhóm tháng`);
+for (const f of fs.readdirSync(OUT)) if (/^g-.*\.html$/.test(f) && !hasStub.has(f)) { fs.mkdirSync(parkDir, { recursive: true }); fs.renameSync(path.join(OUT, f), path.join(parkDir, f)); }
+console.log(`Quét ${files.length} ảnh · mới nén ${done} · hiện có ${view.total} ảnh hiển thị (${entries.length - uniq.length - gone.length} trùng, ${gone.length} đã xoá) · ${view.groups.length} nhóm`);
 if (pending > 0) console.log(`CÒN ${pending} ảnh chưa nén, chạy lại: node gallery.mjs`);

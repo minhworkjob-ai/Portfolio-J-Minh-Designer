@@ -131,6 +131,26 @@ body.admin .adminbar{display:block}
 .sub{color:var(--mut)}
 .toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:70;background:#fff;color:#111;border-radius:10px;padding:12px 18px;font-size:14px;box-shadow:0 10px 40px rgba(0,0,0,.5);display:none;max-width:90vw}
 .toast.on{display:block}
+
+/* sửa tên, sắp xếp, gộp, chuyển (chỉ khi đăng nhập) */
+.ctl{display:none;position:absolute;top:8px;left:8px;z-index:5;gap:4px;flex-wrap:wrap;max-width:calc(100% - 90px)}
+body.admin .ctl{display:flex}
+.ctl button,.pgbtn{background:rgba(11,11,11,.9);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:600 12px "Bai Jamjuree","Inter Tight",sans-serif;cursor:pointer;text-transform:uppercase}
+.ctl button:hover,.pgbtn:hover{border-color:var(--fg)}
+.gtools{display:none;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+body.admin .gtools{display:flex}
+.gtools .btn{margin-top:0;padding:11px 16px}
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:45;background:#161615;border:1px solid var(--red);border-radius:14px;padding:10px 14px;display:none;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:94vw}
+.selbar.on{display:flex}.selbar .btn{margin-top:0;padding:10px 14px}.selbar span{font-size:14px;color:var(--fg)}
+body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
+.masonry a.picked{outline:3px solid var(--red);outline-offset:-3px}
+.masonry a.picked::after{content:"✓";position:absolute;top:8px;left:8px;background:var(--red);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.dragging{opacity:.35}
+.dropb{box-shadow:-5px 0 0 var(--red)}.dropa{box-shadow:5px 0 0 var(--red)}
+.dropb.y{box-shadow:0 -5px 0 var(--red)}.dropa.y{box-shadow:0 5px 0 var(--red)}
+.fld{width:100%;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--fg);padding:13px;font:16px "Inter Tight",sans-serif}
+.fld:focus{outline:none;border-color:var(--red)}
+.del-page,.ren-page{margin-right:10px}
 </style></head><body data-pid="ait-tech">
 <div class="topbar"><a href="index.html">J Minh Designer</a><span>Portfolio 2026</span></div>
 <div class="menu" id="menu"><a href="index.html">Thương hiệu</a><a href="gallery.html">Sản phẩm</a><a href="admin.html" id="menu-admin">Đăng nhập</a><a href="trash.html" id="menu-trash" style="display:none">Thùng rác</a><small>Thiết kế nhận diện thương hiệu và ấn phẩm, từ ý tưởng đến sản phẩm hoàn thiện.</small></div>
@@ -140,5 +160,5 @@ body.admin .adminbar{display:block}
 <footer><div class="wrap"><span>J Minh Designer</span><span>Cập nhật 15/11/2026</span></div></footer>
 <div class="adminbar" id="adminbar">Chế độ quản trị · <a href="admin.html" style="text-decoration:underline">Tài khoản</a></div>
 <div class="toast" id="toast"></div>
-<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs"};</script><script src="site.js" defer></script>
+<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs","title":"J Minh Designer"};</script><script src="site.js" defer></script>
 </body></html>

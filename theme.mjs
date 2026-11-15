@@ -3,11 +3,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const HERE = path.dirname(fileURLToPath(import.meta.url));
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+import { esc, fancy, emptyEdits, normEdits } from './render.js';
 
-// chữ O được thay bằng O nghiêng kiểu serif, như trang tham khảo
-export const fancy = s => esc(s).replace(/[Oo]/g, m => `<span class="o">${m.toUpperCase()}</span>`);
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+export { fancy };
 
 const STAR = `<svg class="star" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 0l2.4 19.6L48 24l-21.6 4.4L24 48l-2.4-19.6L0 24l21.6-4.4z" fill="currentColor"/></svg>`;
 
@@ -140,6 +139,26 @@ body.admin .adminbar{display:block}
 .sub{color:var(--mut)}
 .toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:70;background:#fff;color:#111;border-radius:10px;padding:12px 18px;font-size:14px;box-shadow:0 10px 40px rgba(0,0,0,.5);display:none;max-width:90vw}
 .toast.on{display:block}
+
+/* sửa tên, sắp xếp, gộp, chuyển (chỉ khi đăng nhập) */
+.ctl{display:none;position:absolute;top:8px;left:8px;z-index:5;gap:4px;flex-wrap:wrap;max-width:calc(100% - 90px)}
+body.admin .ctl{display:flex}
+.ctl button,.pgbtn{background:rgba(11,11,11,.9);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:600 12px "Bai Jamjuree","Inter Tight",sans-serif;cursor:pointer;text-transform:uppercase}
+.ctl button:hover,.pgbtn:hover{border-color:var(--fg)}
+.gtools{display:none;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+body.admin .gtools{display:flex}
+.gtools .btn{margin-top:0;padding:11px 16px}
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:45;background:#161615;border:1px solid var(--red);border-radius:14px;padding:10px 14px;display:none;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:94vw}
+.selbar.on{display:flex}.selbar .btn{margin-top:0;padding:10px 14px}.selbar span{font-size:14px;color:var(--fg)}
+body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
+.masonry a.picked{outline:3px solid var(--red);outline-offset:-3px}
+.masonry a.picked::after{content:"✓";position:absolute;top:8px;left:8px;background:var(--red);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.dragging{opacity:.35}
+.dropb{box-shadow:-5px 0 0 var(--red)}.dropa{box-shadow:5px 0 0 var(--red)}
+.dropb.y{box-shadow:0 -5px 0 var(--red)}.dropa.y{box-shadow:0 5px 0 var(--red)}
+.fld{width:100%;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--fg);padding:13px;font:16px "Inter Tight",sans-serif}
+.fld:focus{outline:none;border-color:var(--red)}
+.del-page,.ren-page{margin-right:10px}
 `;
 
 export const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">`;
@@ -156,12 +175,12 @@ export function hero(cfg) {
 export const pageHead = (title, sub = '') => `<div class="wrap"><header class="ph"><h1>${fancy(title)}</h1>${sub ? `<p>${esc(sub)}</p>` : ''}</header></div>`;
 
 export function shell(cfg, title, desc, inner, active = 'brands', extra = {}) {
-  const site = JSON.stringify({ repo: cfg.repo, branch: cfg.branch || 'main', out: cfg.out || 'docs' });
+  const site = JSON.stringify({ repo: cfg.repo, branch: cfg.branch || 'main', out: cfg.out || 'docs', title: cfg.title });
   return `<!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <meta name="theme-color" content="#0b0b0b">${FONTS}
-<style>${CSS}</style></head><body${extra.pid ? ` data-pid="${esc(extra.pid)}"` : ''}>
+<style>${CSS}</style></head><body${extra.pid ? ` data-pid="${esc(extra.pid)}"` : ''}${extra.page ? ` data-page="${esc(extra.page)}"` : ''}>
 <div class="topbar"><a href="index.html">${esc(cfg.title)}</a><span>Portfolio ${new Date().getFullYear()}</span></div>
 <div class="menu" id="menu"><a href="index.html">Thương hiệu</a><a href="gallery.html">Sản phẩm</a><a href="admin.html" id="menu-admin">Đăng nhập</a><a href="trash.html" id="menu-trash" style="display:none">Thùng rác</a><small>${esc(cfg.subtitle)}</small></div>
 <button class="menubtn" id="menubtn" aria-label="Menu"><i></i><span>Menu</span></button>
@@ -176,8 +195,15 @@ ${inner}
 // chép site.js vào thư mục web
 export function writeSiteAssets(outDir) {
   fs.copyFileSync(path.join(HERE, 'site.js'), path.join(outDir, 'site.js'));
+  fs.copyFileSync(path.join(HERE, 'render.js'), path.join(outDir, 'render.js'));
   const f = path.join(outDir, 'deleted.json');
   if (!fs.existsSync(f)) fs.writeFileSync(f, JSON.stringify({ projects: [], months: [], images: [], trash: [] }, null, 2));
+  const e = path.join(outDir, 'edits.json');
+  if (!fs.existsSync(e)) fs.writeFileSync(e, JSON.stringify(emptyEdits(), null, 2) + '\n');
+}
+
+export function readEdits(outDir) {
+  try { return normEdits(JSON.parse(fs.readFileSync(path.join(outDir, 'edits.json'), 'utf8'))); } catch { return emptyEdits(); }
 }
 
 export function readDeleted(outDir) {
