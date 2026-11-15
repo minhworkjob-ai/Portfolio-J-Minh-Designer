@@ -5,7 +5,7 @@
   window.__fx = 1;
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const SPLIT = '.mega, .ph h1, article h1, h2.sec, .login h1';
-  const REVEAL = '.card, .trow, .secbar, .tag, .lead, .masonry a, .album';
+  const REVEAL = '.card, .trow, .secbar, .tag, .lead, .masonry a, .album, .gc-head, .gc-stage, .ftrow, .ftcol';
 
   // ---- tách chữ: từng ký tự nằm trong một khung che, trượt lên khi vào màn hình ----
   function split(el) {

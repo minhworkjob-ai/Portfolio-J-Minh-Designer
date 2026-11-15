@@ -13,8 +13,7 @@
   const toast = (m, ms = 4000) => { const t = $('#toast'); if (!t) return alert(m); t.textContent = m; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), ms); };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const slugify = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const tc = t => t === t.toUpperCase() ? t.toLowerCase().replace(/(^|\s)(\S)/g, (m, a, b) => a + b.toUpperCase()) : t;
-  const mixTitle = s => { const w = String(s).trim().split(/\s+/), k = Math.floor(w.length / 2); return w.length < 2 ? `<span class="sa">${esc(s)}</span>` : `<span class="se">${esc(tc(w.slice(0, k).join(' ')))}</span> <span class="sa">${esc(w.slice(k).join(' '))}</span>`; };
+  const mixTitle = s => String(s).replace(/[Oo]|[&<>"]/g, m => /[Oo]/.test(m) ? `<span class="o">${m}</span>` : esc(m));
   const PAGE = document.body.dataset.page || '';
   const PID = document.body.dataset.pid || '';
   const SYNC = 'Web cập nhật sau khoảng 1 phút.';
@@ -150,6 +149,7 @@
     const gone = new Set(del.projects);
     $$('[data-id^="p:"]').forEach(e => { if (gone.has(slugOf(e))) e.remove(); });
     if (PID && gone.has(PID)) { location.replace('index.html'); return; }
+    $$('.gc-slide[data-id^="p:"]').forEach(s => { const n = ed.brandNames[slugOf(s)]; if (n) s.dataset.label = n; });
     $$('.card[data-id^="p:"]').forEach(c => {
       const n = ed.brandNames[slugOf(c)];
       if (n) { $('h3', c).textContent = n; c.dataset.label = n; if (!c.dataset.q0) c.dataset.q0 = c.dataset.q || ''; c.dataset.q = (n + ' ' + c.dataset.q0).toLowerCase(); }

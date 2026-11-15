@@ -19,11 +19,13 @@ a{color:var(--fg);text-decoration:none}
 .wrap{max-width:1280px;margin:0 auto;padding:0 20px}
 .star{width:44px;height:44px;color:var(--red);flex:none}
 
-/* tiêu đề: serif nghiêng Playfair Display + sans đậm hẹp Anton; chữ thường: Bai Jamjuree */
-h1,h2,h3,.mega,.menu a,.modal h3{font-family:"Anton","Bai Jamjuree",Impact,sans-serif;font-weight:400}
-.se{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:-.01em}
-.sa{font-family:"Anton","Bai Jamjuree",Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.005em}
-.mega,.ph h1,article h1,.login h1,h2.sec,.menu a,.meta h3{letter-spacing:0}
+/* tiêu đề như trang mẫu: Host Grotesk VN (bản Việt hoá, OFL) + chữ O nghiêng Playfair Display; chữ thường: Bai Jamjuree */
+@font-face{font-family:"Host Grotesk VN";src:url(fonts/HostGroteskVN-Regular.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Host Grotesk VN";src:url(fonts/HostGroteskVN-Medium.woff2) format("woff2");font-weight:500;font-style:normal;font-display:swap}
+h1,h2,h3,h6,.mega,.menu a,.modal h3,.topbar,.mq{font-family:"Host Grotesk VN","Bai Jamjuree",sans-serif}
+.mega,.ph h1,article h1,.login h1,h2.sec,.menu a,.mq{font-weight:400}
+.meta h3,article h2,.modal h3{font-weight:500}
+.o{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.02em}
 /* thanh trên */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;padding:14px 20px;font-size:15px;letter-spacing:.01em;text-transform:uppercase;mix-blend-mode:difference;color:#fff;pointer-events:none}
 .topbar a{pointer-events:auto;color:#fff}
@@ -94,8 +96,50 @@ th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
 th{color:var(--mut);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
 blockquote{margin:16px 0;padding:4px 16px;border-left:3px solid var(--red);color:var(--mut)}
 pre{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
-footer{border-top:1px solid var(--line);padding:26px 0 120px;color:var(--mut);font-size:14px;text-transform:uppercase;letter-spacing:.03em}
-footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+/* chân trang như trang mẫu: khung tối, ánh đỏ từ dưới, ngôi sao lớn, chữ chạy ngang */
+.ft{padding:0 12px 12px;margin-top:40px}
+.ftbox{position:relative;overflow:hidden;border-radius:22px;border:1px solid var(--line);background:radial-gradient(120% 80% at 50% 115%,var(--red) 0%,#7a0a05 30%,#1a0605 55%,#0b0b0b 75%);min-height:min(92vh,760px);display:flex;flex-direction:column;justify-content:space-between}
+.ftrow{display:flex;justify-content:space-between;gap:16px;padding:22px 24px;text-transform:uppercase;font-size:15px;letter-spacing:.02em}
+.ftrow h6{margin:0;font-size:15px;font-weight:400}
+.ftmid{position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:0 24px;flex:1}
+.ftcol{display:flex;flex-direction:column;gap:14px;text-transform:uppercase;font-size:15px;z-index:2;padding-bottom:22px}
+.ftcol.r{text-align:right;align-items:flex-end}
+.ftcol small{display:block;color:var(--mut);font-size:12px;letter-spacing:.06em}
+.ftstar{position:absolute;left:50%;top:46%;width:min(42vw,340px);height:min(42vw,340px);transform:translate(-50%,-50%);perspective:800px;pointer-events:none}
+.ftstar svg{width:100%;height:100%;color:#1c0a08;filter:drop-shadow(0 30px 60px rgba(0,0,0,.6)) drop-shadow(0 0 2px rgba(255,80,60,.6));animation:turn 9s linear infinite}
+@keyframes turn{to{transform:rotateY(360deg)}}
+.sl{display:inline-block;overflow:hidden;vertical-align:top;line-height:1.25}
+.sl b{display:block;font-weight:inherit;transition:transform .55s cubic-bezier(.16,1,.3,1)}
+.sl b+b{position:absolute}.sl{position:relative}
+.sl i{font-style:normal;display:inline-block;transition:transform .5s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--i)*14ms)}
+.sl b+b i{transform:translateY(110%)}
+.sl:hover b:first-child i{transform:translateY(-110%)}.sl:hover b+b i{transform:none}
+.marq{overflow:hidden;white-space:nowrap;padding:0 0 10px;position:relative;z-index:1}
+.mq-track{display:inline-flex;animation:mq 26s linear infinite}
+.mq{font-size:clamp(70px,17vw,250px);line-height:.9;text-transform:uppercase;letter-spacing:-.05em;padding-right:.35em}
+.mq .r{color:var(--red)}
+@keyframes mq{to{transform:translateX(-50%)}}
+@media (max-width:640px){.ftmid{flex-direction:column;align-items:flex-start;justify-content:flex-end}.ftcol.r{text-align:left;align-items:flex-start}.ftstar{top:30%}}
+@media (prefers-reduced-motion:reduce){.mq-track,.ftstar svg{animation:none}}
+
+/* carousel dự án nổi bật */
+.gcar{position:relative;padding:30px 0 70px;overflow:hidden;outline:none}
+.gc-head{display:flex;justify-content:space-between;gap:14px;text-transform:uppercase;font-size:14px;color:var(--mut);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
+.gc-title{text-align:center;margin:44px 20px 28px;min-height:100px}
+.gc-title h3{margin:0;font-size:clamp(34px,6vw,76px);line-height:1;text-transform:uppercase;font-weight:400;letter-spacing:-.045em}
+.gc-title h3.sw{animation:gcin .7s cubic-bezier(.16,1,.3,1)}
+@keyframes gcin{from{opacity:0;transform:translateY(35%)}to{opacity:1;transform:none}}
+.gc-title p{margin:10px 0 0;color:var(--mut);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+.gc-stage{position:relative;height:min(52vw,500px);perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.gc-stage.drag{cursor:grabbing}
+.gc-track{position:absolute;inset:0;transform-style:preserve-3d}
+.gc-slide{--w:min(66vw,780px);position:absolute;left:50%;top:0;width:var(--w);height:100%;margin-left:calc(var(--w) / -2);border-radius:24px;overflow:hidden;background:var(--paper);will-change:transform;box-shadow:0 40px 90px rgba(0,0,0,.6);transition:filter .3s}
+.gc-slide img{width:100%;height:100%;object-fit:contain;padding:7%;pointer-events:none;-webkit-user-drag:none}
+.gc-slide::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.35),rgba(255,255,255,0) 30%,rgba(255,255,255,0) 72%,rgba(255,255,255,.16));box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 0 -40px 80px rgba(0,0,0,.08)}
+.gc-foot{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:30px;font-size:13px;letter-spacing:.1em}
+.gc-nav{background:none;border:1px solid var(--line);color:var(--fg);width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1}
+.gc-nav:hover{border-color:var(--fg)}
+@media (max-width:640px){.gc-slide{--w:78vw}.gc-stage{height:64vw}}
 
 /* thư viện ảnh */
 .masonry{columns:230px;column-gap:12px;padding:6px 0 48px}
@@ -204,15 +248,45 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 .login code{word-break:break-all}
 `;
 
-export const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500&family=Anton&display=swap" rel="stylesheet">`;
+export const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet">`;
 
 // trang chủ: hero lớn
 export function hero(cfg) {
   const img = cfg.heroImage ? `<img src="${esc(cfg.heroImage)}" alt="" data-speed="-0.06">` : '';
   return `<section class="hero"><div class="redpanel">${img}</div><div class="wrap">
 <div class="tag">${STAR}<p>${esc(cfg.subtitle)}</p></div>
-<h1 class="mega" data-speed="0.1">${mixTitle(cfg.heroLine1 || 'J MINH', 'se')}<br>${mixTitle(cfg.heroLine2 || 'DESIGNER', 'sa')}<br><span class="r">${mixTitle(cfg.heroLine3 || '.2026', 'sa')}</span></h1>
+<h1 class="mega" data-speed="0.1">${fancy(cfg.heroLine1 || 'MY')}<br>${fancy(cfg.heroLine2 || 'PORTFOLIO')}<br><span class="r">${fancy(cfg.heroLine3 || '.2026')}</span></h1>
 </div></section>`;
+}
+
+// link chữ cuộn lên khi rê chuột (như trang mẫu)
+const roll = (href, text, ext) => { const ch = [...String(text)].map((c, i) => `<i style="--i:${i}">${c === ' ' ? '&nbsp;' : esc(c)}</i>`).join('');
+  return `<a class="sl" href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''} aria-label="${esc(text)}"><b aria-hidden="true">${ch}</b><b aria-hidden="true">${ch}</b></a>`; };
+
+// carousel dự án nổi bật: items = [{slug, title, cover, tags}]
+export function carousel(items, label = 'Dự án nổi bật') {
+  if (!items.length) return '';
+  return `<section class="gcar" id="work" tabindex="0" aria-label="${esc(label)}"><div class="wrap gc-head"><span>${fancy(label)}</span><span>Kéo hoặc bấm ‹ ›</span></div>
+<div class="gc-title"><h3 id="gcName">${fancy(items[0].title)}</h3><p id="gcTags">${esc(items[0].tags)}</p></div>
+<div class="gc-stage"><div class="gc-track">${items.map(it => `<a class="gc-slide" href="${esc(it.slug)}.html" data-id="p:${esc(it.slug)}" data-label="${esc(it.title)}" data-tags="${esc(it.tags)}" draggable="false"><img src="${esc(it.cover)}" alt="${esc(it.title)}" loading="lazy" draggable="false"></a>`).join('')}</div></div>
+<div class="gc-foot"><button class="gc-nav" type="button" data-d="-1" aria-label="Trước">‹</button><span id="gcNo">01/${String(items.length).padStart(2, '0')}</span><button class="gc-nav" type="button" data-d="1" aria-label="Sau">›</button></div></section>`;
+}
+
+function footer(cfg) {
+  const c = cfg.contact || {};
+  const left = [], right = [];
+  if (c.phone) left.push(`<div><small>Điện thoại</small>${roll('tel:' + String(c.phone).replace(/\s/g, ''), c.phone)}</div>`);
+  if (c.email) left.push(`<div><small>Email</small>${roll('mailto:' + c.email, c.email)}</div>`);
+  for (const [k, lab] of [['linkedin', 'LinkedIn'], ['behance', 'Behance'], ['instagram', 'Instagram'], ['facebook', 'Facebook']])
+    if (c[k]) right.push(`<div><small>${lab}</small>${roll(c[k], c[k].replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''), true)}</div>`);
+  if (!left.length) left.push(`<div><small>Xem</small>${roll('index.html', 'Thương hiệu')}</div><div><small>Xem</small>${roll('gallery.html', 'Sản phẩm')}</div>`);
+  if (!right.length) right.push(`<div><small>Cập nhật</small>${esc(new Date().toLocaleDateString('vi-VN'))}</div>`);
+  const mq = `<span class="mq">${fancy(cfg.marqueeA || 'J Minh')}<span class="r">${fancy(cfg.marqueeB || '.Portfolio')}</span></span>`;
+  return `<footer class="ft" id="contact"><div class="ftbox">
+<div class="ftrow"><h6>${fancy(cfg.title)}</h6><h6>${fancy('Portfolio ' + new Date().getFullYear())}</h6></div>
+<div class="ftmid"><div class="ftstar">${STAR.replace('class="star"', '')}</div><div class="ftcol">${left.join('')}</div><div class="ftcol r">${right.join('')}</div></div>
+<div class="marq" aria-hidden="true"><div class="mq-track">${mq.repeat(4)}</div></div>
+</div></footer>`;
 }
 
 // tiêu đề trang con
@@ -226,14 +300,14 @@ export function shell(cfg, title, desc, inner, active = 'brands', extra = {}) {
 <meta name="theme-color" content="#0b0b0b">${FONTS}
 <script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('fx');setTimeout(function(){if(!window.__fx)document.documentElement.classList.add('fx-off')},4000)}</script>
 <style>${CSS}</style></head><body${extra.pid ? ` data-pid="${esc(extra.pid)}"` : ''}${extra.page ? ` data-page="${esc(extra.page)}"` : ''}>
-<div class="topbar"><a href="index.html">${esc(cfg.title)}</a><span>Portfolio ${new Date().getFullYear()}</span></div>
+<div class="topbar"><a href="index.html">${fancy(cfg.title)}</a><span>${fancy('Portfolio ' + new Date().getFullYear())}</span></div>
 <div class="menu" id="menu"><a href="index.html" style="--i:0">Thương hiệu</a><a href="gallery.html" style="--i:1">Sản phẩm</a><a href="signup.html" style="--i:2">Tài khoản</a><a href="admin.html" id="menu-admin" style="--i:3">Quản trị</a><a href="trash.html" id="menu-trash" style="display:none;--i:4">Thùng rác</a><small style="--i:5">${esc(cfg.subtitle)}</small></div>
 <button class="menubtn" id="menubtn" aria-label="Menu"><i></i><span>Menu</span></button>
 ${inner}
-<footer><div class="wrap"><span>${esc(cfg.title)}</span><span>Cập nhật ${new Date().toLocaleDateString('vi-VN')}</span></div></footer>
+${footer(cfg)}
 <div class="adminbar" id="adminbar">Chế độ quản trị · <a href="admin.html" style="text-decoration:underline">Tài khoản</a></div>
 <div class="toast" id="toast"></div>
-<script>window.SITE=${site};</script><script src="site.js" defer></script><script src="fx.js" defer></script>
+<script>window.SITE=${site};</script><script src="site.js" defer></script><script src="fx.js" defer></script><script src="carousel.js" defer></script>
 </body></html>`;
 }
 
@@ -243,6 +317,9 @@ export function writeSiteAssets(outDir) {
   fs.copyFileSync(path.join(HERE, 'render.js'), path.join(outDir, 'render.js'));
   fs.copyFileSync(path.join(HERE, 'fx.js'), path.join(outDir, 'fx.js'));
   fs.copyFileSync(path.join(HERE, 'auth.js'), path.join(outDir, 'auth.js'));
+  fs.copyFileSync(path.join(HERE, 'carousel.js'), path.join(outDir, 'carousel.js'));
+  fs.mkdirSync(path.join(outDir, 'fonts'), { recursive: true });   // Host Grotesk VN + giấy phép OFL
+  for (const f of fs.readdirSync(path.join(HERE, 'fonts'))) if (/\.(woff2|txt|md)$/.test(f)) fs.copyFileSync(path.join(HERE, 'fonts', f), path.join(outDir, 'fonts', f));
   const hp = path.join(outDir, 'hero.svg');  // ảnh tạm; muốn đổi ảnh thật, xem heroImage trong site.config.json
   if (!fs.existsSync(hp)) fs.copyFileSync(path.join(HERE, 'hero-placeholder.svg'), hp);
   const f = path.join(outDir, 'deleted.json');

@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { shell as themeShell, hero, pageHead, mixTitle, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
+import { shell as themeShell, hero, pageHead, mixTitle, carousel, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'site.config.json'), 'utf8'));
@@ -224,7 +224,9 @@ const cards = pages.map((p, i) => `
 </a>`).join('');
 const home = shell(cfg.title, cfg.subtitle, `
 ${hero(cfg)}
-<div class="wrap" id="work"><div class="secbar"><span>Thương hiệu</span><input id="q" type="search" placeholder="Tìm thương hiệu…" aria-label="Tìm"><span id="n">${pages.length} dự án</span></div>
+${carousel(pages.filter(p => p.cover).map(p => ({ slug: p.slug, title: p.title, cover: p.cover,
+  tags: ((Array.isArray(p.fm.tags) ? p.fm.tags : []).filter(t => !/^(wiki|wiivent|thực-thể|thuc-the)$/i.test(t)).slice(0, 2).map(t => t.replace(/-/g, ' ')).join(' / ')) || 'Nhận diện thương hiệu' })))}
+<div class="wrap" id="brands"><div class="secbar"><span>Thương hiệu</span><input id="q" type="search" placeholder="Tìm thương hiệu…" aria-label="Tìm"><span id="n">${pages.length} dự án</span></div>
 <main class="grid" id="g">${cards}</main></div>
 <script>
 const q=document.getElementById('q'),n=document.getElementById('n'),cs=[...document.querySelectorAll('.card')];
@@ -282,9 +284,9 @@ for (const p of pages) {
 }
 
 // báo file cũ không còn được tạo (không tự xoá)
-const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'render.js', 'fx.js', 'auth.js', 'signup.html', 'hero.svg', 'deleted.json', 'edits.json', 'gallery.json', 'group.html', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
+const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'render.js', 'fx.js', 'carousel.js', 'auth.js', 'signup.html', 'hero.svg', 'deleted.json', 'edits.json', 'gallery.json', 'group.html', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
 const stale = [];
-(function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-)/.test(r)) stale.push(r); } })(OUT);
+(function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-|fonts\/)/.test(r)) stale.push(r); } })(OUT);
 if (stale.length) console.log('File cũ có thể xoá tay:', stale.join(', '));
 console.log(`Đã tạo ${pages.length} trang và ${fs.readdirSync(ASSETS).length} ảnh trong ${path.relative(ROOT, OUT)}/`);
 for (const p of pages) console.log(' -', p.name);

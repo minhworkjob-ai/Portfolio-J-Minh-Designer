@@ -41,8 +41,8 @@
   },
   "repo": "minhworkjob-ai/Portfolio-J-Minh-Designer",
   "branch": "main",
-  "heroLine1": "J MINH",
-  "heroLine2": "DESIGNER",
+  "heroLine1": "MY",
+  "heroLine2": "PORTFOLIO",
   "heroLine3": ".2026",
   "heroImage": "hero.svg",
   "firebase": {
@@ -50,5 +50,15 @@
     "authDomain": "",
     "projectId": "",
     "appId": ""
+  },
+  "marqueeA": "J Minh",
+  "marqueeB": ".Portfolio",
+  "contact": {
+    "email": "",
+    "phone": "",
+    "linkedin": "",
+    "behance": "",
+    "instagram": "",
+    "facebook": ""
   }
 }
