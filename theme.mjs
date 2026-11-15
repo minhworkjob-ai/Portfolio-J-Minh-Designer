@@ -270,9 +270,13 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 
 
 /* biểu tượng solid chuyển động + tiêu đề từng mục */
-.ic{width:100%;height:100%;fill:currentColor;overflow:visible}
+.ic{width:100%;height:100%;fill:url(#lgi);overflow:visible}
 .sec-h{display:flex;align-items:center;gap:16px;border-top:1px solid var(--line);padding-top:26px}
-.sec-ic{width:54px;height:54px;color:var(--red);flex:none;display:block}
+/* Liquid Glass (theo hướng dẫn Apple): ô vuông bo siêu elip, nền kính nhuộm màu, vệt sáng phản chiếu ở mép trên-trái, bóng đổ mềm; hình icon là lớp kính trong nằm nổi phía trên */
+.sec-ic{width:64px;height:64px;flex:none;position:relative;display:grid;place-items:center;border-radius:30%;isolation:isolate;background:linear-gradient(150deg,rgba(255,86,70,.92),rgba(255,29,18,.42) 55%,rgba(110,8,4,.7));box-shadow:inset 1.5px 1.5px 1px rgba(255,255,255,.7),inset -1px -1px 1px rgba(255,255,255,.2),inset 0 0 20px rgba(255,255,255,.14),0 12px 26px rgba(255,29,18,.3),0 2px 6px rgba(0,0,0,.45)}
+.sec-ic::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:radial-gradient(110% 75% at 22% -5%,rgba(255,255,255,.6),transparent 56%),radial-gradient(80% 60% at 100% 110%,rgba(255,255,255,.2),transparent 60%)}
+.sec-ic::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;background:linear-gradient(140deg,rgba(255,255,255,.85),rgba(255,255,255,0) 40%,rgba(255,255,255,0) 62%,rgba(255,255,255,.4));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.sec-ic svg{width:56%;height:56%;filter:drop-shadow(0 3px 3px rgba(80,0,0,.45))}
 .sec-t{margin:0;font-size:clamp(34px,6vw,76px);line-height:1;text-transform:uppercase;font-weight:400;letter-spacing:-.04em}
 .sec-r{margin-left:auto;display:flex;align-items:center;gap:12px;text-transform:uppercase;font-size:14px;color:var(--mut)}
 .ic-work path{animation:lay 3.2s ease-in-out infinite}.ic-work .l2{animation-delay:.25s}.ic-work .l1{animation-delay:.5s}
@@ -285,7 +289,7 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 .ic-contact .pl{transform-box:fill-box;transform-origin:center;animation:fly 3s ease-in-out infinite}
 @keyframes fly{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(3px,-4px) rotate(-6deg)}}
 .ic-home{animation:spin 14s linear infinite}
-.nav-links a svg{width:15px;height:15px;margin-right:7px;vertical-align:-2px;color:var(--red);fill:currentColor;overflow:visible}
+.nav-links a svg{width:17px;height:17px;margin-right:7px;vertical-align:-3px;fill:url(#lgi);overflow:visible;filter:drop-shadow(0 0 5px rgba(255,29,18,.75))}
 section[id],footer[id]{scroll-margin-top:84px}
 .sect{padding:34px 0 40px}
 .pgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));padding:22px 0 8px}
@@ -303,14 +307,14 @@ section[id],footer[id]{scroll-margin-top:84px}
 .fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:38;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .fab-b{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.22);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;padding:0;-webkit-backdrop-filter:blur(12px) saturate(170%);backdrop-filter:blur(12px) saturate(170%);box-shadow:inset 0 1px 1px rgba(255,255,255,.4),0 8px 24px rgba(0,0,0,.4);transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .3s}
 .fab-b:active{transform:scale(.92)}
-.fab-b svg{width:24px;height:24px;fill:currentColor}
-.fab-c{background:var(--red)}
+.fab-b svg{width:24px;height:24px;fill:url(#lgi);filter:drop-shadow(0 2px 3px rgba(60,0,0,.4))}
+.fab-c{background:linear-gradient(150deg,rgba(255,96,80,.95),rgba(255,29,18,.55) 60%,rgba(120,8,4,.75));box-shadow:inset 1.5px 1.5px 1px rgba(255,255,255,.7),inset -1px -1px 1px rgba(255,255,255,.2),0 12px 26px rgba(255,29,18,.35),0 2px 6px rgba(0,0,0,.4)}
 .fab-c svg{animation:wig 2.6s ease-in-out infinite;transform-origin:50% 60%}
 @keyframes wig{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-14deg)}82%{transform:rotate(12deg)}88%{transform:rotate(-8deg)}94%{transform:rotate(5deg)}}
 .fab-c::after{content:"";position:absolute;inset:-1px;border-radius:50%;border:2px solid var(--red);animation:ring 2.6s ease-out infinite;pointer-events:none}
 .fab-c{position:relative}
 @keyframes ring{0%{transform:scale(1);opacity:.7}70%,100%{transform:scale(1.55);opacity:0}}
-.fab-up{background:rgba(22,22,21,.72);opacity:0;transform:translateY(12px);pointer-events:none}
+.fab-up{background:linear-gradient(150deg,rgba(255,255,255,.28),rgba(255,255,255,.08));opacity:0;transform:translateY(12px);pointer-events:none}
 .fab-up.on{opacity:1;transform:none;pointer-events:auto}
 .fab-up svg{animation:upb 1.8s ease-in-out infinite}
 @keyframes upb{0%,100%{transform:translateY(2px)}50%{transform:translateY(-3px)}}
@@ -319,7 +323,7 @@ section[id],footer[id]{scroll-margin-top:84px}
 .fab-m a{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:999px;color:#fff;font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.04em;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .fab-m a i{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;font-size:12px}
 .fab-m a svg{width:18px;height:18px;fill:currentColor}
-.fab-z{background:#0068ff}.fab-p{background:#1fa855}
+.fab-z{background:linear-gradient(150deg,rgba(60,140,255,.95),rgba(0,104,255,.55));box-shadow:inset 1.5px 1.5px 1px rgba(255,255,255,.65),0 10px 24px rgba(0,104,255,.3)}.fab-p{background:linear-gradient(150deg,rgba(70,210,120,.95),rgba(31,168,85,.55));box-shadow:inset 1.5px 1.5px 1px rgba(255,255,255,.65),0 10px 24px rgba(31,168,85,.3)}
 @media (prefers-reduced-motion:reduce){.fab-c svg,.fab-c::after,.fab-up svg{animation:none}}
 
 /* đăng ký / đăng nhập thành viên */
@@ -393,7 +397,7 @@ function footer(cfg) {
   if (!right.length) right.push(`<div><small>Cập nhật</small>${esc(new Date().toLocaleDateString('vi-VN'))}</div>`);
   const mq = `<span class="mq">${fancy(cfg.marqueeA || 'J Minh')}<span class="r">${fancy(cfg.marqueeB || '.Portfolio')}</span></span>`;
   return `<footer class="ft" id="contact"><div class="ftbox">
-<div class="ftrow"><h6><span class="sec-ic" style="display:inline-block;width:26px;height:26px;vertical-align:-6px;margin-right:10px">${ICONS.contact}</span>${fancy('Liên hệ')}</h6><h6>${fancy('Portfolio ' + new Date().getFullYear())}</h6></div>
+<div class="ftrow"><h6><span class="sec-ic" style="display:inline-grid;width:38px;height:38px;vertical-align:-11px;margin-right:12px">${ICONS.contact}</span>${fancy('Liên hệ')}</h6><h6>${fancy('Portfolio ' + new Date().getFullYear())}</h6></div>
 <div class="ftmid"><div class="ftstar">${STAR.replace('class="star"', '')}</div><div class="ftcol">${left.join('')}</div><div class="ftcol r">${right.join('')}</div></div>
 <div class="marq" aria-hidden="true"><div class="mq-track">${mq.repeat(4)}</div></div>
 </div></footer>`;
@@ -410,6 +414,7 @@ export function shell(cfg, title, desc, inner, active = 'brands', extra = {}) {
 <meta name="theme-color" content="#0b0b0b">${FONTS}
 <script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('fx');setTimeout(function(){if(!window.__fx)document.documentElement.classList.add('fx-off')},4000)}</script>
 <style>${CSS}</style></head><body${extra.pid ? ` data-pid="${esc(extra.pid)}"` : ''}${extra.page ? ` data-page="${esc(extra.page)}"` : ''}>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lgi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".98"/><stop offset=".55" stop-color="#ffe3df" stop-opacity=".82"/><stop offset="1" stop-color="#fff" stop-opacity=".95"/></linearGradient></defs></svg>
 <nav class="nav" id="nav" aria-label="Điều hướng"><a class="nav-logo" href="index.html">${fancy(cfg.title)}</a>
 <div class="nav-links"><a href="index.html#work" data-s="work">${ICONS.work}Dự án</a><a href="index.html#brands" data-s="brands"${active === 'brands' ? ' class="on"' : ''}>${ICONS.brands}Thương hiệu</a><a href="index.html#products" data-s="products"${active === 'gallery' ? ' class="on"' : ''}>${ICONS.products}Sản phẩm</a><a href="#contact" data-s="contact">${ICONS.contact}Liên hệ</a></div>
 <span class="nav-yr">${fancy('Portfolio ' + new Date().getFullYear())}</span><button class="nav-menu" id="menubtn" type="button" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button></nav>
