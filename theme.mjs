@@ -125,6 +125,16 @@ h3.album{margin:34px 0 8px;font-size:14px;color:var(--mut);text-transform:upperc
 body.admin .del{display:block}
 .adminbar{display:none;position:fixed;left:16px;bottom:16px;z-index:40;background:var(--red);color:#fff;border-radius:12px;padding:12px 16px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
 body.admin .adminbar{display:block}
+.modal{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.modal .box{background:#161615;border:1px solid var(--line);border-radius:16px;padding:28px;max-width:460px;width:100%}
+.modal h3{margin:0 0 10px;font-size:26px;letter-spacing:-.03em;text-transform:uppercase}
+.modal p{margin:0;color:var(--mut)}.modal p b{color:var(--fg)}
+.acts{display:flex;gap:10px;flex-wrap:wrap}.modal .acts{margin-top:24px;justify-content:flex-end}
+.modal .btn{margin-top:0}.btn.safe{background:#2f8f46}
+.trow{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding:16px 0}
+.trow small{display:block;color:var(--mut);margin-top:2px}.trow .btn{margin-top:0;padding:11px 18px}
+.sub{color:var(--mut)}
 .toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:70;background:#fff;color:#111;border-radius:10px;padding:12px 18px;font-size:14px;box-shadow:0 10px 40px rgba(0,0,0,.5);display:none;max-width:90vw}
 .toast.on{display:block}
 `;
@@ -150,7 +160,7 @@ export function shell(cfg, title, desc, inner, active = 'brands', extra = {}) {
 <meta name="theme-color" content="#0b0b0b">${FONTS}
 <style>${CSS}</style></head><body${extra.pid ? ` data-pid="${esc(extra.pid)}"` : ''}>
 <div class="topbar"><a href="index.html">${esc(cfg.title)}</a><span>Portfolio ${new Date().getFullYear()}</span></div>
-<div class="menu" id="menu"><a href="index.html">Thương hiệu</a><a href="gallery.html">Sản phẩm</a><a href="admin.html" id="menu-admin">Đăng nhập</a><small>${esc(cfg.subtitle)}</small></div>
+<div class="menu" id="menu"><a href="index.html">Thương hiệu</a><a href="gallery.html">Sản phẩm</a><a href="admin.html" id="menu-admin">Đăng nhập</a><a href="trash.html" id="menu-trash" style="display:none">Thùng rác</a><small>${esc(cfg.subtitle)}</small></div>
 <button class="menubtn" id="menubtn" aria-label="Menu"><i></i><span>Menu</span></button>
 ${inner}
 <footer><div class="wrap"><span>${esc(cfg.title)}</span><span>Cập nhật ${new Date().toLocaleDateString('vi-VN')}</span></div></footer>
@@ -164,7 +174,7 @@ ${inner}
 export function writeSiteAssets(outDir) {
   fs.copyFileSync(path.join(HERE, 'site.js'), path.join(outDir, 'site.js'));
   const f = path.join(outDir, 'deleted.json');
-  if (!fs.existsSync(f)) fs.writeFileSync(f, JSON.stringify({ projects: [], months: [], images: [] }, null, 2));
+  if (!fs.existsSync(f)) fs.writeFileSync(f, JSON.stringify({ projects: [], months: [], images: [], trash: [] }, null, 2));
 }
 
 export function readDeleted(outDir) {

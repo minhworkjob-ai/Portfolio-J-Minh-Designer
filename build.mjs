@@ -238,6 +238,7 @@ const loginHtml = shell('Đăng nhập · ' + cfg.title, 'Đăng nhập quản t
 <li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
 <li>Generate token, chép dán vào ô trên.</li></ol></div></div>`, 'admin');
 fs.writeFileSync(path.join(OUT, 'admin.html'), loginHtml);
+fs.writeFileSync(path.join(OUT, 'trash.html'), shell('Thùng rác · ' + cfg.title, 'Thùng rác', `${pageHead('Thùng rác', 'Mục đã xoá được giữ 15 ngày, sau đó bị xoá hẳn. Chỉ chủ website xem được.')}<div class="wrap"><div class="secbar"><span>Đã xoá</span><span id="trashcount"></span></div><div id="trashlist"><p class="sub">Đang tải…</p></div><div style="height:60px"></div></div>`));
 
 // trang chi tiết
 for (const p of pages) {
@@ -247,7 +248,7 @@ for (const p of pages) {
 }
 
 // báo file cũ không còn được tạo (không tự xoá)
-const made = new Set(['index.html', 'admin.html', 'site.js', 'deleted.json', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
+const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'deleted.json', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
 const stale = [];
 (function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-)/.test(r)) stale.push(r); } })(OUT);
 if (stale.length) console.log('File cũ có thể xoá tay:', stale.join(', '));
