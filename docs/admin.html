@@ -115,24 +115,45 @@ pre{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-r
 @media (max-width:640px){.ftmid{flex-direction:column;align-items:flex-start;justify-content:flex-end}.ftcol.r{text-align:left;align-items:flex-start}.ftstar{top:30%}}
 @media (prefers-reduced-motion:reduce){.mq-track,.ftstar svg{animation:none}}
 
-/* carousel dự án nổi bật */
-.gcar{position:relative;padding:30px 0 70px;overflow:hidden;outline:none}
-.gc-head{display:flex;justify-content:space-between;gap:14px;text-transform:uppercase;font-size:14px;color:var(--mut);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
-.gc-title{text-align:center;margin:44px 20px 28px;min-height:100px}
-.gc-title h3{margin:0;font-size:clamp(34px,6vw,76px);line-height:1;text-transform:uppercase;font-weight:400;letter-spacing:-.045em}
-.gc-title h3.gcsw{animation:gcin .7s cubic-bezier(.16,1,.3,1)}
-@keyframes gcin{from{opacity:0;transform:translateY(35%)}to{opacity:1;transform:none}}
+/* carousel dự án: thẻ cong trên mặt trong hình trụ (mỗi thẻ là nhiều lát dọc) */
+.gcar{position:relative;padding:30px 0 60px;overflow:hidden;outline:none}
+.gc-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;text-transform:uppercase;font-size:14px;color:var(--mut);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
+.gc-tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.02);overflow-x:auto;max-width:100%;scrollbar-width:none}
+.gc-tabs::-webkit-scrollbar{display:none}
+.gc-tab{flex:none;background:none;border:0;color:var(--mut);padding:10px 18px;border-radius:999px;font:500 13px "Host Grotesk VN","Bai Jamjuree",sans-serif;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;transition:background .35s,color .35s}
+.gc-tab:hover{color:var(--fg)}
+.gc-tab.on{background:var(--fg);color:#0b0b0b}
+.gc-tab sup{font-size:10px;margin-left:5px;opacity:.7}
+.gc-hint{font-size:12px}
+.gc-title{text-align:center;margin:40px 20px 24px;min-height:110px}
+.gc-title h3{margin:0;font-size:clamp(36px,6.4vw,84px);line-height:1;text-transform:uppercase;font-weight:400;letter-spacing:-.045em}
+.gc-w{display:inline-block;white-space:nowrap;overflow:clip;padding:.08em .04em .12em;margin:-.08em -.04em -.12em;vertical-align:top}
+.gc-c{display:inline-block}
+.gc-c.o{font-family:"Playfair Display",Georgia,serif;font-style:italic;letter-spacing:-.02em}
+.gc-title h3.go .gc-c{animation:gcup .9s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*26ms)}
+@keyframes gcup{from{transform:translateY(110%)}to{transform:none}}
 .gc-title p{margin:10px 0 0;color:var(--mut);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
-.gc-stage{position:relative;height:min(52vw,500px);perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.gc-title p.go{animation:gcfade .8s .25s both}
+@keyframes gcfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.gc-stage{position:relative;height:min(46vw,540px);touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .gc-stage.drag{cursor:grabbing}
-.gc-track{position:absolute;inset:0;transform-style:preserve-3d}
-.gc-slide{--w:min(66vw,780px);position:absolute;left:50%;top:0;width:var(--w);height:100%;margin-left:calc(var(--w) / -2);border-radius:24px;overflow:hidden;background:var(--paper);will-change:transform;box-shadow:0 40px 90px rgba(0,0,0,.6);transition:filter .3s}
-.gc-slide img{width:100%;height:100%;object-fit:contain;padding:7%;pointer-events:none;-webkit-user-drag:none}
-.gc-slide::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.35),rgba(255,255,255,0) 30%,rgba(255,255,255,0) 72%,rgba(255,255,255,.16));box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 0 -40px 80px rgba(0,0,0,.08)}
-.gc-foot{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:30px;font-size:13px;letter-spacing:.1em}
-.gc-nav{background:none;border:1px solid var(--line);color:var(--fg);width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1}
-.gc-nav:hover{border-color:var(--fg)}
-@media (max-width:640px){.gc-slide{--w:78vw}.gc-stage{height:64vw}}
+.gc-track{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
+.gc-card{position:absolute;left:0;top:0;transform-style:preserve-3d;--bg:#f1ede4}
+.gc-sl{position:absolute;overflow:hidden;background:var(--bg);backface-visibility:hidden;will-change:transform}
+.gc-sl img{position:absolute;top:0;max-width:none;object-fit:contain;padding:min(6%,40px);pointer-events:none;-webkit-user-drag:none}
+.gc-card.cover .gc-sl img{object-fit:cover;padding:0}
+.gc-sl::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(255,255,255,.05) 18%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 72%,rgba(255,255,255,.1) 90%,rgba(255,255,255,.24));background-size:var(--bw) 100%;background-repeat:no-repeat;background-position:var(--bx) 0}
+.gc-sl::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,5,var(--s1,0)),rgba(5,5,5,var(--s2,0)))}
+.gc-sl.first{border-radius:26px 0 0 26px}.gc-sl.last{border-radius:0 26px 26px 0}
+.gc-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mut);font-size:15px;text-transform:uppercase;letter-spacing:.06em;padding:20px}
+.gc-empty[hidden]{display:none}
+.gc-foot{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:26px;font-size:13px;letter-spacing:.1em}
+.gc-nav{background:none;border:1px solid var(--line);color:var(--fg);width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1;transition:border-color .2s,background .2s}
+.gc-nav:hover{border-color:var(--fg);background:rgba(255,255,255,.04)}
+.gc-prog{width:120px;height:1px;background:var(--line);margin:16px auto 0;overflow:hidden}
+.gc-prog i{display:block;height:100%;background:var(--red);transform-origin:left;transform:scaleX(0)}
+@media (max-width:640px){.gc-stage{height:70vw}.gc-hint{display:none}.gc-head{justify-content:center}.gc-head>span:first-child{display:none}.gc-tabs{width:100%;justify-content:space-between}.gc-tab{padding:9px 10px;font-size:11px;letter-spacing:.03em}.gc-tab sup{margin-left:3px}}
+@media (prefers-reduced-motion:reduce){.gc-title h3.go .gc-c,.gc-title p.go{animation:none}}
 
 /* thư viện ảnh */
 .masonry{columns:230px;column-gap:12px;padding:6px 0 48px}
@@ -257,10 +278,10 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 <li>Generate token, chép dán vào ô trên.</li></ol></div></div>
 <footer class="ft" id="contact"><div class="ftbox">
 <div class="ftrow"><h6>J Minh Designer</h6><h6>P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span> 2026</h6></div>
-<div class="ftmid"><div class="ftstar"><svg  viewBox="0 0 48 48" aria-hidden="true"><path d="M24 0l2.4 19.6L48 24l-21.6 4.4L24 48l-2.4-19.6L0 24l21.6-4.4z" fill="currentColor"/></svg></div><div class="ftcol"><div><small>Xem</small><a class="sl" href="index.html" aria-label="Thương hiệu"><b aria-hidden="true"><i style="--i:0">T</i><i style="--i:1">h</i><i style="--i:2">ư</i><i style="--i:3">ơ</i><i style="--i:4">n</i><i style="--i:5">g</i><i style="--i:6">&nbsp;</i><i style="--i:7">h</i><i style="--i:8">i</i><i style="--i:9">ệ</i><i style="--i:10">u</i></b><b aria-hidden="true"><i style="--i:0">T</i><i style="--i:1">h</i><i style="--i:2">ư</i><i style="--i:3">ơ</i><i style="--i:4">n</i><i style="--i:5">g</i><i style="--i:6">&nbsp;</i><i style="--i:7">h</i><i style="--i:8">i</i><i style="--i:9">ệ</i><i style="--i:10">u</i></b></a></div><div><small>Xem</small><a class="sl" href="gallery.html" aria-label="Sản phẩm"><b aria-hidden="true"><i style="--i:0">S</i><i style="--i:1">ả</i><i style="--i:2">n</i><i style="--i:3">&nbsp;</i><i style="--i:4">p</i><i style="--i:5">h</i><i style="--i:6">ẩ</i><i style="--i:7">m</i></b><b aria-hidden="true"><i style="--i:0">S</i><i style="--i:1">ả</i><i style="--i:2">n</i><i style="--i:3">&nbsp;</i><i style="--i:4">p</i><i style="--i:5">h</i><i style="--i:6">ẩ</i><i style="--i:7">m</i></b></a></div></div><div class="ftcol r"><div><small>Cập nhật</small>15/11/2026</div></div></div>
+<div class="ftmid"><div class="ftstar"><svg  viewBox="0 0 48 48" aria-hidden="true"><path d="M24 0l2.4 19.6L48 24l-21.6 4.4L24 48l-2.4-19.6L0 24l21.6-4.4z" fill="currentColor"/></svg></div><div class="ftcol"><div><small>Xem</small><a class="sl" href="index.html" aria-label="Thương hiệu"><b aria-hidden="true"><i style="--i:0">T</i><i style="--i:1">h</i><i style="--i:2">ư</i><i style="--i:3">ơ</i><i style="--i:4">n</i><i style="--i:5">g</i><i style="--i:6">&nbsp;</i><i style="--i:7">h</i><i style="--i:8">i</i><i style="--i:9">ệ</i><i style="--i:10">u</i></b><b aria-hidden="true"><i style="--i:0">T</i><i style="--i:1">h</i><i style="--i:2">ư</i><i style="--i:3">ơ</i><i style="--i:4">n</i><i style="--i:5">g</i><i style="--i:6">&nbsp;</i><i style="--i:7">h</i><i style="--i:8">i</i><i style="--i:9">ệ</i><i style="--i:10">u</i></b></a></div><div><small>Xem</small><a class="sl" href="gallery.html" aria-label="Sản phẩm"><b aria-hidden="true"><i style="--i:0">S</i><i style="--i:1">ả</i><i style="--i:2">n</i><i style="--i:3">&nbsp;</i><i style="--i:4">p</i><i style="--i:5">h</i><i style="--i:6">ẩ</i><i style="--i:7">m</i></b><b aria-hidden="true"><i style="--i:0">S</i><i style="--i:1">ả</i><i style="--i:2">n</i><i style="--i:3">&nbsp;</i><i style="--i:4">p</i><i style="--i:5">h</i><i style="--i:6">ẩ</i><i style="--i:7">m</i></b></a></div></div><div class="ftcol r"><div><small>Cập nhật</small>16/11/2026</div></div></div>
 <div class="marq" aria-hidden="true"><div class="mq-track"><span class="mq">J Minh<span class="r">.P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span></span></span><span class="mq">J Minh<span class="r">.P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span></span></span><span class="mq">J Minh<span class="r">.P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span></span></span><span class="mq">J Minh<span class="r">.P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span></span></span></div></div>
 </div></footer>
 <div class="adminbar" id="adminbar">Chế độ quản trị · <a href="admin.html" style="text-decoration:underline">Tài khoản</a></div>
 <div class="toast" id="toast"></div>
-<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs","title":"J Minh Designer","firebase":{"apiKey":"","authDomain":"","projectId":"","appId":""},"v":"mwi2xj1m"};</script><script src="site.js?v=mwi2xj1m" defer></script><script src="fx.js?v=mwi2xj1m" defer></script><script src="carousel.js?v=mwi2xj1m" defer></script>
+<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs","title":"J Minh Designer","firebase":{"apiKey":"","authDomain":"","projectId":"","appId":""},"v":"mwi3gbvm","car":{}};</script><script src="site.js?v=mwi3gbvm" defer></script><script src="fx.js?v=mwi3gbvm" defer></script><script src="carousel.js?v=mwi3gbvm" defer></script>
 </body></html>

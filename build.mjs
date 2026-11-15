@@ -224,7 +224,7 @@ const cards = pages.map((p, i) => `
 </a>`).join('');
 const home = shell(cfg.title, cfg.subtitle, `
 ${hero(cfg)}
-${carousel(pages.filter(p => p.cover).map(p => ({ slug: p.slug, title: p.title, cover: p.cover,
+${carousel(pages.filter(p => p.cover).map(p => ({ slug: p.slug, href: p.slug + '.html', title: p.title, cover: p.cover, fit: 'contain', bg: '#f1ede4',
   tags: ((Array.isArray(p.fm.tags) ? p.fm.tags : []).filter(t => !/^(wiki|wiivent|thực-thể|thuc-the)$/i.test(t)).slice(0, 2).map(t => t.replace(/-/g, ' ')).join(' / ')) || 'Nhận diện thương hiệu' })))}
 <div class="wrap" id="brands"><div class="secbar"><span>Thương hiệu</span><input id="q" type="search" placeholder="Tìm thương hiệu…" aria-label="Tìm"><span id="n">${pages.length} dự án</span></div>
 <main class="grid" id="g">${cards}</main></div>

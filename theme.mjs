@@ -123,24 +123,45 @@ pre{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-r
 @media (max-width:640px){.ftmid{flex-direction:column;align-items:flex-start;justify-content:flex-end}.ftcol.r{text-align:left;align-items:flex-start}.ftstar{top:30%}}
 @media (prefers-reduced-motion:reduce){.mq-track,.ftstar svg{animation:none}}
 
-/* carousel dự án nổi bật */
-.gcar{position:relative;padding:30px 0 70px;overflow:hidden;outline:none}
-.gc-head{display:flex;justify-content:space-between;gap:14px;text-transform:uppercase;font-size:14px;color:var(--mut);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
-.gc-title{text-align:center;margin:44px 20px 28px;min-height:100px}
-.gc-title h3{margin:0;font-size:clamp(34px,6vw,76px);line-height:1;text-transform:uppercase;font-weight:400;letter-spacing:-.045em}
-.gc-title h3.gcsw{animation:gcin .7s cubic-bezier(.16,1,.3,1)}
-@keyframes gcin{from{opacity:0;transform:translateY(35%)}to{opacity:1;transform:none}}
+/* carousel dự án: thẻ cong trên mặt trong hình trụ (mỗi thẻ là nhiều lát dọc) */
+.gcar{position:relative;padding:30px 0 60px;overflow:hidden;outline:none}
+.gc-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;text-transform:uppercase;font-size:14px;color:var(--mut);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
+.gc-tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.02);overflow-x:auto;max-width:100%;scrollbar-width:none}
+.gc-tabs::-webkit-scrollbar{display:none}
+.gc-tab{flex:none;background:none;border:0;color:var(--mut);padding:10px 18px;border-radius:999px;font:500 13px "Host Grotesk VN","Bai Jamjuree",sans-serif;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;transition:background .35s,color .35s}
+.gc-tab:hover{color:var(--fg)}
+.gc-tab.on{background:var(--fg);color:#0b0b0b}
+.gc-tab sup{font-size:10px;margin-left:5px;opacity:.7}
+.gc-hint{font-size:12px}
+.gc-title{text-align:center;margin:40px 20px 24px;min-height:110px}
+.gc-title h3{margin:0;font-size:clamp(36px,6.4vw,84px);line-height:1;text-transform:uppercase;font-weight:400;letter-spacing:-.045em}
+.gc-w{display:inline-block;white-space:nowrap;overflow:clip;padding:.08em .04em .12em;margin:-.08em -.04em -.12em;vertical-align:top}
+.gc-c{display:inline-block}
+.gc-c.o{font-family:"Playfair Display",Georgia,serif;font-style:italic;letter-spacing:-.02em}
+.gc-title h3.go .gc-c{animation:gcup .9s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*26ms)}
+@keyframes gcup{from{transform:translateY(110%)}to{transform:none}}
 .gc-title p{margin:10px 0 0;color:var(--mut);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
-.gc-stage{position:relative;height:min(52vw,500px);perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.gc-title p.go{animation:gcfade .8s .25s both}
+@keyframes gcfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.gc-stage{position:relative;height:min(46vw,540px);touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .gc-stage.drag{cursor:grabbing}
-.gc-track{position:absolute;inset:0;transform-style:preserve-3d}
-.gc-slide{--w:min(66vw,780px);position:absolute;left:50%;top:0;width:var(--w);height:100%;margin-left:calc(var(--w) / -2);border-radius:24px;overflow:hidden;background:var(--paper);will-change:transform;box-shadow:0 40px 90px rgba(0,0,0,.6);transition:filter .3s}
-.gc-slide img{width:100%;height:100%;object-fit:contain;padding:7%;pointer-events:none;-webkit-user-drag:none}
-.gc-slide::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.35),rgba(255,255,255,0) 30%,rgba(255,255,255,0) 72%,rgba(255,255,255,.16));box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 0 -40px 80px rgba(0,0,0,.08)}
-.gc-foot{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:30px;font-size:13px;letter-spacing:.1em}
-.gc-nav{background:none;border:1px solid var(--line);color:var(--fg);width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1}
-.gc-nav:hover{border-color:var(--fg)}
-@media (max-width:640px){.gc-slide{--w:78vw}.gc-stage{height:64vw}}
+.gc-track{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
+.gc-card{position:absolute;left:0;top:0;transform-style:preserve-3d;--bg:#f1ede4}
+.gc-sl{position:absolute;overflow:hidden;background:var(--bg);backface-visibility:hidden;will-change:transform}
+.gc-sl img{position:absolute;top:0;max-width:none;object-fit:contain;padding:min(6%,40px);pointer-events:none;-webkit-user-drag:none}
+.gc-card.cover .gc-sl img{object-fit:cover;padding:0}
+.gc-sl::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(255,255,255,.05) 18%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 72%,rgba(255,255,255,.1) 90%,rgba(255,255,255,.24));background-size:var(--bw) 100%;background-repeat:no-repeat;background-position:var(--bx) 0}
+.gc-sl::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,5,var(--s1,0)),rgba(5,5,5,var(--s2,0)))}
+.gc-sl.first{border-radius:26px 0 0 26px}.gc-sl.last{border-radius:0 26px 26px 0}
+.gc-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mut);font-size:15px;text-transform:uppercase;letter-spacing:.06em;padding:20px}
+.gc-empty[hidden]{display:none}
+.gc-foot{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:26px;font-size:13px;letter-spacing:.1em}
+.gc-nav{background:none;border:1px solid var(--line);color:var(--fg);width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:20px;line-height:1;transition:border-color .2s,background .2s}
+.gc-nav:hover{border-color:var(--fg);background:rgba(255,255,255,.04)}
+.gc-prog{width:120px;height:1px;background:var(--line);margin:16px auto 0;overflow:hidden}
+.gc-prog i{display:block;height:100%;background:var(--red);transform-origin:left;transform:scaleX(0)}
+@media (max-width:640px){.gc-stage{height:70vw}.gc-hint{display:none}.gc-head{justify-content:center}.gc-head>span:first-child{display:none}.gc-tabs{width:100%;justify-content:space-between}.gc-tab{padding:9px 10px;font-size:11px;letter-spacing:.03em}.gc-tab sup{margin-left:3px}}
+@media (prefers-reduced-motion:reduce){.gc-title h3.go .gc-c,.gc-title p.go{animation:none}}
 
 /* thư viện ảnh */
 .masonry{columns:230px;column-gap:12px;padding:6px 0 48px}
@@ -264,13 +285,18 @@ export function hero(cfg) {
 const roll = (href, text, ext) => { const ch = [...String(text)].map((c, i) => `<i style="--i:${i}">${c === ' ' ? '&nbsp;' : esc(c)}</i>`).join('');
   return `<a class="sl" href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''} aria-label="${esc(text)}"><b aria-hidden="true">${ch}</b><b aria-hidden="true">${ch}</b></a>`; };
 
-// carousel dự án nổi bật: items = [{slug, title, cover, tags}]
-export function carousel(items, label = 'Dự án nổi bật') {
-  if (!items.length) return '';
-  return `<section class="gcar" id="work" tabindex="0" aria-label="${esc(label)}"><div class="wrap gc-head"><span>${fancy(label)}</span><span>Kéo hoặc bấm ‹ ›</span></div>
-<div class="gc-title"><h3 id="gcName">${fancy(items[0].title)}</h3><p id="gcTags">${esc(items[0].tags)}</p></div>
-<div class="gc-stage"><div class="gc-track">${items.map(it => `<a class="gc-slide" href="${esc(it.slug)}.html" data-id="p:${esc(it.slug)}" data-label="${esc(it.title)}" data-tags="${esc(it.tags)}" draggable="false"><img src="${esc(it.cover)}" alt="${esc(it.title)}" loading="lazy" draggable="false"></a>`).join('')}</div></div>
-<div class="gc-foot"><button class="gc-nav" type="button" data-d="-1" aria-label="Trước">‹</button><span id="gcNo">01/${String(items.length).padStart(2, '0')}</span><button class="gc-nav" type="button" data-d="1" aria-label="Sau">›</button></div></section>`;
+// carousel dự án: items = [{slug, href, title, cover, tags, fit, bg}] của tab Visual Identity;
+// tab Social Media và UX/UI được carousel.js dựng từ thư viện ấn phẩm.
+export function carousel(items) {
+  const data = JSON.stringify(items).replace(/</g, '\\u003c');
+  const tab = (k, l, on) => `<button class="gc-tab${on ? ' on' : ''}" type="button" role="tab" aria-selected="${on}" data-cat="${k}">${esc(l)}<sup>${on ? items.length : ''}</sup></button>`;
+  return `<section class="gcar" id="work" tabindex="0" aria-label="Dự án"><div class="wrap gc-head"><span>${fancy('Dự án')}</span>
+<div class="gc-tabs" role="tablist">${tab('visual', 'Visual Identity', true)}${tab('social', 'Social Media')}${tab('uxui', 'UX/UI')}</div><span class="gc-hint">Kéo · cuộn ngang · ‹ ›</span></div>
+<div class="gc-title" aria-live="polite"><h3 id="gcName"></h3><p id="gcTags"></p></div>
+<div class="gc-stage"><div class="gc-track"></div><div class="gc-empty" hidden>Dự án mục này đang được cập nhật</div></div>
+<div class="gc-foot"><button class="gc-nav" type="button" data-d="-1" aria-label="Trước">‹</button><span id="gcNo">01/${String(items.length).padStart(2, '0')}</span><button class="gc-nav" type="button" data-d="1" aria-label="Sau">›</button></div>
+<div class="gc-prog" aria-hidden="true"><i></i></div>
+<script type="application/json" id="gcData">${data}</script></section>`;
 }
 
 function footer(cfg) {
@@ -294,7 +320,7 @@ function footer(cfg) {
 export const pageHead = (title, sub = '') => `<div class="wrap"><header class="ph"><h1>${fancy(title)}</h1>${sub ? `<p>${esc(sub)}</p>` : ''}</header></div>`;
 
 export function shell(cfg, title, desc, inner, active = 'brands', extra = {}) {
-  const site = JSON.stringify({ repo: cfg.repo, branch: cfg.branch || 'main', out: cfg.out || 'docs', title: cfg.title, firebase: cfg.firebase || {}, v: V });
+  const site = JSON.stringify({ repo: cfg.repo, branch: cfg.branch || 'main', out: cfg.out || 'docs', title: cfg.title, firebase: cfg.firebase || {}, v: V, car: cfg.carousel || {} });
   return `<!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
