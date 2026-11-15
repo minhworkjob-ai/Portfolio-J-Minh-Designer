@@ -182,7 +182,7 @@
   }
 
   const curKey = () => new URLSearchParams(location.search).get('k');
-  async function refresh() { applyBrands(); await renderGallery(); decorate(); }
+  async function refresh() { applyBrands(); await renderGallery(); decorate(); if (window.FX) FX.scan(); else addEventListener('load', () => window.FX && FX.scan()); }
 
   // =====================================================================
   //  Chế độ quản trị
@@ -422,7 +422,7 @@
   async function enterAdmin() {
     state.admin = true;
     document.body.classList.add('admin');
-    if (adminLink) adminLink.textContent = 'Quản trị';
+    
     if (trashLink) trashLink.style.display = '';
     try { const [d, e] = await Promise.all([readDeleted(), apiJson('edits.json', normEd)]); state.del = d; state.edits = e; } catch {}
     await refresh();

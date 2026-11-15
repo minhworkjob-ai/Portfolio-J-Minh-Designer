@@ -43,5 +43,12 @@
   "branch": "main",
   "heroLine1": "J MINH",
   "heroLine2": "DESIGNER",
-  "heroLine3": ".2026"
+  "heroLine3": ".2026",
+  "heroImage": "hero.svg",
+  "firebase": {
+    "apiKey": "",
+    "authDomain": "",
+    "projectId": "",
+    "appId": ""
+  }
 }

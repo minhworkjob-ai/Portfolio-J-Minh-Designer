@@ -246,6 +246,32 @@ const loginHtml = shell('Đăng nhập · ' + cfg.title, 'Đăng nhập quản t
 <li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
 <li>Generate token, chép dán vào ô trên.</li></ol></div></div>`, 'admin');
 fs.writeFileSync(path.join(OUT, 'admin.html'), loginHtml);
+
+// trang đăng ký / đăng nhập thành viên (Firebase Authentication)
+fs.writeFileSync(path.join(OUT, 'signup.html'), shell('Tài khoản · ' + cfg.title, 'Đăng ký và đăng nhập', `
+<div class="wrap"><div class="login"><h1 id="at">Đăng ký</h1>
+<div id="authbox">
+<div class="tabs"><button type="button" data-m="signup" class="on">Đăng ký</button><button type="button" data-m="login">Đăng nhập</button></div>
+<button class="sbtn" type="button" data-p="google"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg> Tiếp tục với Google</button>
+<button class="sbtn" type="button" data-p="github"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.200 1.8 1.200 1 1.800 2.800 1.300 3.400 1 .1-.8.4-1.300.8-1.600-2.600-.3-5.300-1.300-5.300-5.700 0-1.300.5-2.300 1.200-3.100-.1-.3-.5-1.500.1-3.100 0 0 1-.3 3.200 1.200a11 11 0 0 1 5.800 0C17.300 5.800 18.300 6.100 18.300 6.100c.6 1.600.2 2.800.1 3.100.8.800 1.200 1.800 1.200 3.100 0 4.400-2.700 5.400-5.300 5.700.4.400.8 1.100.8 2.200v3.300c0 .3.2.7.8.6A11.500 11.500 0 0 0 23.500 12 11.500 11.500 0 0 0 12 .5z"/></svg> Tiếp tục với GitHub</button>
+<div class="or">hoặc dùng email</div>
+<form id="authform" autocomplete="on" novalidate>
+<div data-only="signup"><label for="nm">Tên hiển thị</label><input id="nm" type="text" autocomplete="name" placeholder="Nguyễn Văn A"></div>
+<label for="em">Email</label><input id="em" type="email" autocomplete="email" placeholder="ban@email.com">
+<label for="pw">Mật khẩu</label><input id="pw" type="password" autocomplete="new-password" placeholder="Ít nhất 8 ký tự">
+<div data-only="signup"><label for="pw2">Nhập lại mật khẩu</label><input id="pw2" type="password" autocomplete="new-password"></div>
+<div class="row" data-only="login" hidden><a href="#" id="forgot" class="lnk">Quên mật khẩu?</a></div>
+<button class="btn full" type="submit" id="authgo">Tạo tài khoản</button>
+<div class="msg" id="authmsg"></div></form></div>
+<div id="acct" hidden><div class="acct"><img id="aphoto" alt="" hidden><div><b id="aname"></b><span id="amail"></span></div></div>
+<button class="btn ghost" type="button" id="signout">Đăng xuất</button></div>
+<div id="setup" hidden><p>Tính năng này dùng <b>Firebase Authentication</b> của Google. Cần cấu hình một lần:</p>
+<ol><li>Mở <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> → Add project.</li>
+<li>Build → Authentication → Get started → bật <b>Email/Password</b>, <b>Google</b> và <b>GitHub</b> (GitHub cần Client ID/Secret của một OAuth App).</li>
+<li>Authentication → Settings → Authorized domains → thêm <code>${esc(cfg.repo.split("/")[0])}.github.io</code>.</li>
+<li>Project settings → Your apps → Web (&lt;/&gt;) → chép đoạn <code>firebaseConfig</code> vào mục <code>firebase</code> trong <code>site.config.json</code> (apiKey, authDomain, projectId, appId), rồi chạy <code>node build.mjs</code> và đẩy lên GitHub.</li></ol></div>
+</div></div>
+<script type="module" src="auth.js"></script>`, 'account'));
 fs.writeFileSync(path.join(OUT, 'trash.html'), shell('Thùng rác · ' + cfg.title, 'Thùng rác', `${pageHead('Thùng rác', 'Mục đã xoá được giữ 15 ngày, sau đó bị xoá hẳn. Chỉ chủ website xem được.')}<div class="wrap"><div class="secbar"><span>Đã xoá</span><span id="trashcount"></span></div><div id="trashlist"><p class="sub">Đang tải…</p></div><div style="height:60px"></div></div>`));
 
 // trang chi tiết
@@ -256,7 +282,7 @@ for (const p of pages) {
 }
 
 // báo file cũ không còn được tạo (không tự xoá)
-const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'render.js', 'deleted.json', 'edits.json', 'gallery.json', 'group.html', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
+const made = new Set(['index.html', 'admin.html', 'trash.html', 'site.js', 'render.js', 'fx.js', 'auth.js', 'signup.html', 'hero.svg', 'deleted.json', 'edits.json', 'gallery.json', 'group.html', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
 const stale = [];
 (function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-)/.test(r)) stale.push(r); } })(OUT);
 if (stale.length) console.log('File cũ có thể xoá tay:', stale.join(', '));
