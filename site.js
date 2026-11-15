@@ -57,6 +57,20 @@
     ['work', 'brands', 'products', 'contact'].forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
   }
 
+  // ---- nút nổi: lên đầu trang; liên hệ mở Zalo / gọi (chưa cấu hình số thì cuộn tới phần Liên hệ) ----
+  const fab = $('#fab');
+  if (fab) {
+    const up = $('#fabup'), ct = $('#fabc');
+    const sync = () => up.classList.toggle('on', scrollY > 500);
+    addEventListener('scroll', sync, { passive: true }); sync();
+    up.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+    ct.onclick = () => {
+      if (fab.dataset.solo) { const f = $('#contact'); if (f) f.scrollIntoView({ behavior: 'smooth' }); else location.href = 'index.html#contact'; return; }
+      const o = fab.classList.toggle('open'); ct.setAttribute('aria-expanded', o);
+    };
+    document.addEventListener('click', e => { if (!e.target.closest('#fab')) { fab.classList.remove('open'); ct.setAttribute('aria-expanded', 'false'); } });
+  }
+
   // ---- thanh điều hướng: ẩn khi cuộn xuống, hiện lại khi cuộn lên ----
   const nav = $('#nav');
   if (nav) { let y0 = scrollY; addEventListener('scroll', () => { const y = scrollY; nav.classList.toggle('hide', y > y0 && y > 160 && !(menu && menu.classList.contains('on'))); y0 = y; }, { passive: true }); }

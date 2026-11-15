@@ -24,7 +24,9 @@ export const secHead = (key, label, extra = '') => `<div class="sec-h"><span cla
 
 export const CSS = `
 :root{--bg:#0b0b0b;--fg:#e7e1d7;--mut:#8d887f;--card:#151514;--line:#2b2a27;--red:#ff1d12;--paper:#f1ede4}
-*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;touch-action:manipulation}
+input,select,textarea,button{font-size:max(16px,1em)}
+@media (max-width:760px){input,select,textarea{font-size:16px!important}}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 "Bai Jamjuree","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--fg);text-decoration:none}
 ::selection{background:var(--red);color:#fff}
@@ -291,6 +293,30 @@ section[id],footer[id]{scroll-margin-top:84px}
 .more:hover{background:var(--fg);color:#0b0b0b}
 @media (prefers-reduced-motion:reduce){.ic *,.ic{animation:none!important}}
 
+
+/* nút nổi: lên đầu trang + liên hệ Zalo / điện thoại */
+.fab{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:38;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fab-b{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.22);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;padding:0;-webkit-backdrop-filter:blur(12px) saturate(170%);backdrop-filter:blur(12px) saturate(170%);box-shadow:inset 0 1px 1px rgba(255,255,255,.4),0 8px 24px rgba(0,0,0,.4);transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .3s}
+.fab-b:active{transform:scale(.92)}
+.fab-b svg{width:24px;height:24px;fill:currentColor}
+.fab-c{background:var(--red)}
+.fab-c svg{animation:wig 2.6s ease-in-out infinite;transform-origin:50% 60%}
+@keyframes wig{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-14deg)}82%{transform:rotate(12deg)}88%{transform:rotate(-8deg)}94%{transform:rotate(5deg)}}
+.fab-c::after{content:"";position:absolute;inset:-1px;border-radius:50%;border:2px solid var(--red);animation:ring 2.6s ease-out infinite;pointer-events:none}
+.fab-c{position:relative}
+@keyframes ring{0%{transform:scale(1);opacity:.7}70%,100%{transform:scale(1.55);opacity:0}}
+.fab-up{background:rgba(22,22,21,.72);opacity:0;transform:translateY(12px);pointer-events:none}
+.fab-up.on{opacity:1;transform:none;pointer-events:auto}
+.fab-up svg{animation:upb 1.8s ease-in-out infinite}
+@keyframes upb{0%,100%{transform:translateY(2px)}50%{transform:translateY(-3px)}}
+.fab-m{display:flex;flex-direction:column;gap:10px;align-items:flex-end;opacity:0;transform:translateY(10px) scale(.9);transform-origin:bottom right;pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.16,1,.3,1)}
+.fab.open .fab-m{opacity:1;transform:none;pointer-events:auto}
+.fab-m a{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:999px;color:#fff;font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.04em;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.fab-m a i{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;font-size:12px}
+.fab-m a svg{width:18px;height:18px;fill:currentColor}
+.fab-z{background:#0068ff}.fab-p{background:#1fa855}
+@media (prefers-reduced-motion:reduce){.fab-c svg,.fab-c::after,.fab-up svg{animation:none}}
+
 /* đăng ký / đăng nhập thành viên */
 .login input[type=email]{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--fg);padding:16px;font:16px "Bai Jamjuree",sans-serif}
 .login input[type=email]:focus{outline:none;border-color:var(--red)}
@@ -337,6 +363,20 @@ export function carousel(items) {
 <script type="application/json" id="gcData">${data}</script></section>`;
 }
 
+
+// nút nổi: lên đầu trang + liên hệ (Zalo / điện thoại lấy từ contact trong site.config.json)
+function fab(cfg) {
+  const c = cfg.contact || {};
+  const num = String(c.phone || '').replace(/[^\d+]/g, '');
+  const zl = String(c.zalo || c.phone || '').replace(/[^\d]/g, '');
+  const m = [];
+  if (zl) m.push(`<a class="fab-z" href="https://zalo.me/${zl}" target="_blank" rel="noopener">Zalo<i>Zalo</i></a>`);
+  if (num) m.push(`<a class="fab-p" href="tel:${num}">Gọi<i><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.250.2 2.450.6 3.600a1 1 0 0 1-.25 1z"/></svg></i></a>`);
+  return `<div class="fab" id="fab"${m.length ? '' : ' data-solo="1"'}><div class="fab-m">${m.join('')}</div>
+<button class="fab-b fab-c" id="fabc" type="button" aria-label="Liên hệ" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6 2 11c0 2.600 1.200 4.900 3.100 6.600L4 22l4.700-2.100c1 .3 2.100.4 3.300.4 5.500 0 10-4 10-9S17.500 2 12 2z"/></svg></button>
+<button class="fab-b fab-up" id="fabup" type="button" aria-label="Lên đầu trang"><svg viewBox="0 0 24 24"><path d="M12 3 3 13h5v8h8v-8h5z"/></svg></button></div>`;
+}
+
 function footer(cfg) {
   const c = cfg.contact || {};
   const left = [], right = [];
@@ -360,7 +400,7 @@ export const pageHead = (title, sub = '') => `<div class="wrap"><header class="p
 export function shell(cfg, title, desc, inner, active = 'brands', extra = {}) {
   const site = JSON.stringify({ repo: cfg.repo, branch: cfg.branch || 'main', out: cfg.out || 'docs', title: cfg.title, firebase: cfg.firebase || {}, v: V, car: cfg.carousel || {} });
   return `<!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <meta name="theme-color" content="#0b0b0b">${FONTS}
 <script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('fx');setTimeout(function(){if(!window.__fx)document.documentElement.classList.add('fx-off')},4000)}</script>
@@ -374,6 +414,7 @@ ${inner}
 ${footer(cfg)}
 <div class="adminbar" id="adminbar">Chế độ quản trị · <a href="admin.html" style="text-decoration:underline">Tài khoản</a></div>
 <div class="toast" id="toast"></div>
+${fab(cfg)}
 <script>window.SITE=${site};</script><script src="site.js?v=${V}" defer></script><script src="fx.js?v=${V}" defer></script><script src="carousel.js?v=${V}" defer></script>
 </body></html>`;
 }
