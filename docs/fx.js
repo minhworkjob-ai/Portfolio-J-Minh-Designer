@@ -29,7 +29,7 @@
         } else if (n.nodeType === 1 && n.tagName !== 'BR') walk(n);
       });
     };
-    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+    el.setAttribute('aria-label', (el.innerText || el.textContent).replace(/\s+/g, ' ').trim());
     walk(el);
   }
 
