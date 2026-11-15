@@ -127,7 +127,7 @@ pre{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-r
 .gc-head{display:flex;justify-content:space-between;gap:14px;text-transform:uppercase;font-size:14px;color:var(--mut);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
 .gc-title{text-align:center;margin:44px 20px 28px;min-height:100px}
 .gc-title h3{margin:0;font-size:clamp(34px,6vw,76px);line-height:1;text-transform:uppercase;font-weight:400;letter-spacing:-.045em}
-.gc-title h3.sw{animation:gcin .7s cubic-bezier(.16,1,.3,1)}
+.gc-title h3.gcsw{animation:gcin .7s cubic-bezier(.16,1,.3,1)}
 @keyframes gcin{from{opacity:0;transform:translateY(35%)}to{opacity:1;transform:none}}
 .gc-title p{margin:10px 0 0;color:var(--mut);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
 .gc-stage{position:relative;height:min(52vw,500px);perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}

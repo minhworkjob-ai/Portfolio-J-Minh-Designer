@@ -29,7 +29,7 @@
       last = k; const el = s[k];
       name.innerHTML = fancy(el.dataset.label || ''); tags.textContent = el.dataset.tags || '';
       no.textContent = pad(k + 1) + '/' + pad(n);
-      name.classList.remove('sw'); void name.offsetWidth; name.classList.add('sw');
+      name.classList.remove('gcsw'); void name.offsetWidth; name.classList.add('gcsw');
     }
   }
   function tick(now) {
