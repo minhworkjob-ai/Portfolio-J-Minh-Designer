@@ -178,7 +178,7 @@
     const pretty = a => a.replace(/^\d+\s+(?=\d)/, '').replace(/\b\d{3,5}x\d{3,5}\b\s*/g, '').replace(/\s*\(copy\)\s*/i, '').replace(/(?<=[A-Za-z])-(?=[A-Za-z])/g, ' ').trim();
     for (const { a, grp, list } of albums.values()) {
       const it = { href: 'group.html?k=' + encodeURIComponent(grp.key), title: pretty(a) || a, tags: `${grp.label} / ${list.length} ấn phẩm`, cover: 'gallery/' + list[0].id + '.jpg', fit: 'contain', bg: '#121211' };
-      (ux.test(a) ? cats.uxui : vis.test(a) ? cats.visual : cats.social).push(it);
+      (ux.test(a) ? cats.uxui : (vis.test(a) || vis.test(grp.label)) ? cats.visual : cats.social).push(it);
     }
     counts();
     if (cat !== 'visual') { items = cats[cat]; cur = -1; empty.hidden = items.length > 0; cards.forEach(x => { x.k = null; }); }
