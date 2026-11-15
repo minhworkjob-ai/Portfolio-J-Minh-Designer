@@ -44,6 +44,24 @@
   }
   addEventListener('resize', () => { measure(); });
 
+  // ---------- tải ảnh: ảnh nhỏ hiện trước, ảnh lớn thay vào khi tải xong ----------
+  const cache = new Map();
+  const load = url => {
+    if (!url) return Promise.resolve();
+    if (!cache.has(url)) cache.set(url, new Promise(res => { const im = new Image(); im.onload = im.onerror = () => res(url); im.src = url; }));
+    return cache.get(url);
+  };
+  const setSrc = (c, url) => c.sl.forEach(s => { if (s.firstChild.getAttribute('src') !== url) s.firstChild.src = url; });
+  function showImage(c, it) {
+    c.el.classList.add('ld');                                  // ẩn ảnh cũ ngay, không để thẻ hiện nhầm ảnh của mục trước
+    const first = it.thumb || it.cover;
+    load(first).then(() => {
+      if (c.it !== it) return;
+      setSrc(c, first); c.el.classList.remove('ld');
+      if (it.thumb && it.cover !== it.thumb) load(it.cover).then(() => { if (c.it === it) setSrc(c, it.cover); });
+    });
+  }
+
   // ---------- tiêu đề: từng ký tự trượt lên ----------
   function setTitle(it) {
     if (!it) { nameEl.innerHTML = ''; tagEl.textContent = ''; return; }
@@ -63,7 +81,6 @@
     if (!drag && !hover && seen && !reduce && n > 1 && now - idle > AUTO && fadeTo === 1) { target = Math.round(target) + 1; if (!loop && target > n - 1) target = 0; idle = now; }
     if (prog) prog.style.transform = `scaleX(${hover || drag || !seen ? 0 : Math.min(1, (now - idle) / AUTO).toFixed(3)})`;
     fade += (fadeTo - fade) * 0.16;
-    if (pending && fade < 0.04) { pending(); pending = null; }
     track.style.opacity = fade.toFixed(3);
 
     // độ cong tăng khi kéo nhanh
@@ -85,7 +102,7 @@
         c.el.href = it.href; c.el.dataset.k = k; c.el.setAttribute('aria-label', it.title);
         c.el.style.setProperty('--bg', it.bg || '#f1ede4');
         c.el.classList.toggle('cover', it.fit === 'cover');
-        c.sl.forEach(s => { if (s.firstChild.getAttribute('src') !== it.cover) s.firstChild.src = it.cover; });
+        showImage(c, it);
       }
       const phi = (k - pos) * (A + G);
       c.sl.forEach((s, i) => {
@@ -98,7 +115,7 @@
       });
       c.el.tabIndex = k === base ? 0 : -1;
     });
-    const k0 = n ? mod(base, n) : -1;
+    const k0 = n ? mod(Math.round(target), n) : -1;   // tiêu đề theo thẻ sắp vào giữa, đổi ngay khi bấm
     if (k0 !== cur) { cur = k0; setTitle(items[k0]); noEl.textContent = n ? pad(k0 + 1) + '/' + pad(n) : '00/00'; }
     requestAnimationFrame(frame);
   }
@@ -107,15 +124,22 @@
   root.querySelectorAll('.gc-nav').forEach(b => { b.onclick = () => go(+b.dataset.d); });
 
   // ---------- tab phân loại ----------
+  let switching = 0;
   function setCat(c) {
-    if (c === cat && items === cats[c]) return;
+    if (c === cat) return;
+    const my = ++switching;
     tabs.forEach(t => { const on = t.dataset.cat === c; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
-    fadeTo = 0;
-    pending = () => {
-      cat = c; items = cats[c] || []; pos = target = prev = 0; cur = -1; cards.forEach(x => { x.k = null; });
+    root.classList.add('switching');
+    const next = cats[c] || [];
+    const ready = Promise.race([Promise.all(next.slice(0, 3).map(it => load(it.thumb || it.cover))), new Promise(r => setTimeout(r, 1200))]);
+    fadeTo = 0; target = Math.round(target) + 1.4;           // thẻ cũ lướt sang trái và mờ dần
+    Promise.all([ready, new Promise(r => setTimeout(r, 380))]).then(() => {
+      if (my !== switching) return;
+      cat = c; items = next; cur = -1; cards.forEach(x => { x.k = null; x.it = null; });
+      pos = prev = -1.4; target = 0; vel = 0;                  // thẻ mới lướt vào từ bên phải
       empty.hidden = items.length > 0; fadeTo = 1; idle = performance.now();
-    };
-    setTimeout(() => { if (pending) { pending(); pending = null; } }, 420);   // phòng khi trình duyệt tạm dừng khung hình
+      root.classList.remove('switching');
+    });
   }
   tabs.forEach(t => { t.onclick = () => setCat(t.dataset.cat); });
   function counts() { tabs.forEach(t => { const s = t.querySelector('sup'); if (s) s.textContent = (cats[t.dataset.cat] || []).length; }); }
@@ -177,7 +201,7 @@
     }
     const pretty = a => a.replace(/^\d+\s+(?=\d)/, '').replace(/\b\d{3,5}x\d{3,5}\b\s*/g, '').replace(/\s*\(copy\)\s*/i, '').replace(/(?<=[A-Za-z])-(?=[A-Za-z])/g, ' ').trim();
     for (const { a, grp, list } of albums.values()) {
-      const it = { href: 'group.html?k=' + encodeURIComponent(grp.key), title: pretty(a) || a, tags: `${grp.label} / ${list.length} ấn phẩm`, cover: 'gallery/' + list[0].id + '.jpg', fit: 'contain', bg: '#121211' };
+      const it = { href: 'group.html?k=' + encodeURIComponent(grp.key), title: pretty(a) || a, tags: `${grp.label} / ${list.length} ấn phẩm`, cover: 'gallery/' + list[0].id + '.jpg', thumb: 'gallery/' + list[0].id + '-t.jpg', fit: 'contain', bg: '#121211' };
       (ux.test(a) ? cats.uxui : (vis.test(a) || vis.test(grp.label)) ? cats.visual : cats.social).push(it);
     }
     counts();

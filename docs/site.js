@@ -49,6 +49,10 @@
   if (btn) btn.onclick = () => { const on = menu.classList.toggle('on'); $('span', btn).textContent = on ? 'Đóng' : 'Menu'; };
   addEventListener('keydown', e => { if (e.key === 'Escape' && menu) { menu.classList.remove('on'); if (btn) $('span', btn).textContent = 'Menu'; } });
 
+  // ---- thanh điều hướng: ẩn khi cuộn xuống, hiện lại khi cuộn lên ----
+  const nav = $('#nav');
+  if (nav) { let y0 = scrollY; addEventListener('scroll', () => { const y = scrollY; nav.classList.toggle('hide', y > y0 && y > 160 && !(menu && menu.classList.contains('on'))); y0 = y; }, { passive: true }); }
+
   // ---- GitHub API ----
   const API = 'https://api.github.com';
   async function gh(path, opt = {}) {

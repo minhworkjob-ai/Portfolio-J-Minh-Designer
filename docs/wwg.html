@@ -15,13 +15,22 @@ a{color:var(--fg);text-decoration:none}
 /* tiêu đề như trang mẫu: Host Grotesk VN (bản Việt hoá, OFL) + chữ O nghiêng Playfair Display; chữ thường: Bai Jamjuree */
 @font-face{font-family:"Host Grotesk VN";src:url(fonts/HostGroteskVN-Regular.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"Host Grotesk VN";src:url(fonts/HostGroteskVN-Medium.woff2) format("woff2");font-weight:500;font-style:normal;font-display:swap}
-h1,h2,h3,h6,.mega,.menu a,.modal h3,.topbar,.mq{font-family:"Host Grotesk VN","Bai Jamjuree",sans-serif}
+h1,h2,h3,h6,.mega,.menu a,.modal h3,.mq{font-family:"Host Grotesk VN","Bai Jamjuree",sans-serif}
 .mega,.ph h1,article h1,.login h1,h2.sec,.menu a,.mq{font-weight:400}
 .meta h3,article h2,.modal h3{font-weight:500}
 .o{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.02em}
-/* thanh trên */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;padding:14px 20px;font-size:15px;letter-spacing:.01em;text-transform:uppercase;mix-blend-mode:difference;color:#fff;pointer-events:none}
-.topbar a{pointer-events:auto;color:#fff}
+/* thanh điều hướng Liquid Glass: kính mờ + bão hoà màu nền, viền khúc xạ, vệt sáng bóng */
+.nav{position:fixed;top:12px;left:50%;z-index:30;transform:translateX(-50%);width:min(1180px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 7px 7px 20px;border-radius:999px;isolation:isolate;color:#fff;font:500 14px "Host Grotesk VN","Bai Jamjuree",sans-serif;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 1px 10px rgba(0,0,0,.35);background:linear-gradient(120deg,rgba(255,255,255,.15),rgba(255,255,255,.05) 35%,rgba(255,255,255,.03) 65%,rgba(255,255,255,.12));-webkit-backdrop-filter:blur(16px) saturate(185%);backdrop-filter:blur(16px) saturate(185%);backdrop-filter:url(#lg-refract) blur(14px) saturate(185%);box-shadow:inset 0 1px 1px rgba(255,255,255,.5),inset 0 -1px 1px rgba(255,255,255,.12),inset 0 0 22px rgba(255,255,255,.07),0 10px 36px rgba(0,0,0,.38);transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .4s}
+.nav::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:radial-gradient(120% 160% at 12% -40%,rgba(255,255,255,.38),transparent 46%),radial-gradient(90% 140% at 100% 140%,rgba(255,255,255,.16),transparent 52%)}
+.nav::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.75),rgba(255,255,255,.06) 38%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.5));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.nav.hide{transform:translate(-50%,-150%);opacity:0}
+.nav a{color:#fff}
+.nav-logo{white-space:nowrap}
+.nav-links{display:flex;gap:2px}
+.nav-links a{padding:10px 16px;border-radius:999px;transition:background .3s,box-shadow .3s}
+.nav-links a:hover,.nav-links a.on{background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.08)}
+.nav-yr{padding:10px 14px;white-space:nowrap;opacity:.9}
+@media (max-width:760px){.nav-links{display:none}.nav{padding:7px 7px 7px 16px;font-size:13px}}
 
 /* nút MENU */
 .menubtn{position:fixed;right:16px;bottom:16px;z-index:40;display:flex;align-items:center;gap:10px;background:#161615;color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:20px 26px;font:500 16px "Bai Jamjuree",sans-serif;text-transform:uppercase;cursor:pointer}
@@ -142,6 +151,8 @@ pre{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-r
 .gc-sl{position:absolute;overflow:hidden;background:var(--bg);backface-visibility:hidden;will-change:transform}
 .gc-sl img{position:absolute;top:0;max-width:none;object-fit:contain;padding:min(6%,40px);pointer-events:none;-webkit-user-drag:none}
 .gc-card.cover .gc-sl img{object-fit:cover;padding:0}
+.gc-sl img{transition:opacity .4s ease}.gc-card.ld .gc-sl img{opacity:0}
+.gc-title{transition:opacity .3s}.gcar.switching .gc-title{opacity:.25}
 .gc-sl::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(255,255,255,.05) 18%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 72%,rgba(255,255,255,.1) 90%,rgba(255,255,255,.24));background-size:var(--bw) 100%;background-repeat:no-repeat;background-position:var(--bx) 0}
 .gc-sl::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,5,var(--s1,0)),rgba(5,5,5,var(--s2,0)))}
 .gc-sl.first{border-radius:26px 0 0 26px}.gc-sl.last{border-radius:0 26px 26px 0}
@@ -261,7 +272,10 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 .acct b{display:block;font-size:20px}.acct span{color:var(--mut);font-size:14px}
 .login code{word-break:break-all}
 </style></head><body data-pid="wwg">
-<div class="topbar"><a href="index.html">J Minh Designer</a><span>P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span> 2026</span></div>
+<nav class="nav" id="nav" aria-label="Điều hướng"><a class="nav-logo" href="index.html">J Minh Designer</a>
+<div class="nav-links"><a href="index.html#work">Dự án</a><a href="index.html#brands" class="on">Thương hiệu</a><a href="gallery.html">Sản phẩm</a><a href="#contact">Liên hệ</a></div>
+<span class="nav-yr">P<span class="o">o</span>rtf<span class="o">o</span>li<span class="o">o</span> 2026</span></nav>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lg-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.018" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="1.5" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div class="menu" id="menu"><a href="index.html" style="--i:0">Thương hiệu</a><a href="gallery.html" style="--i:1">Sản phẩm</a><a href="signup.html" style="--i:2">Tài khoản</a><a href="admin.html" id="menu-admin" style="--i:3">Quản trị</a><a href="trash.html" id="menu-trash" style="display:none;--i:4">Thùng rác</a><small style="--i:5">Thiết kế nhận diện thương hiệu và ấn phẩm, từ ý tưởng đến sản phẩm hoàn thiện.</small></div>
 <button class="menubtn" id="menubtn" aria-label="Menu"><i></i><span>Menu</span></button>
 <div class="wrap"><a class="back" href="index.html">← Tất cả dự án</a><article>
@@ -273,5 +287,5 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 </div></footer>
 <div class="adminbar" id="adminbar">Chế độ quản trị · <a href="admin.html" style="text-decoration:underline">Tài khoản</a></div>
 <div class="toast" id="toast"></div>
-<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs","title":"J Minh Designer","firebase":{"apiKey":"","authDomain":"","projectId":"","appId":""},"v":"mwi3ni87","car":{}};</script><script src="site.js?v=mwi3ni87" defer></script><script src="fx.js?v=mwi3ni87" defer></script><script src="carousel.js?v=mwi3ni87" defer></script>
+<script>window.SITE={"repo":"minhworkjob-ai/Portfolio-J-Minh-Designer","branch":"main","out":"docs","title":"J Minh Designer","firebase":{"apiKey":"","authDomain":"","projectId":"","appId":""},"v":"mwi43jia","car":{}};</script><script src="site.js?v=mwi43jia" defer></script><script src="fx.js?v=mwi43jia" defer></script><script src="carousel.js?v=mwi43jia" defer></script>
 </body></html>
