@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { shell as themeShell, hero, pageHead, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
+import { shell as themeShell, hero, pageHead, mixTitle, writeSiteAssets, readDeleted, readEdits } from './theme.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'site.config.json'), 'utf8'));
@@ -277,7 +277,7 @@ fs.writeFileSync(path.join(OUT, 'trash.html'), shell('Thùng rác · ' + cfg.tit
 // trang chi tiết
 for (const p of pages) {
   const inner = `<div class="wrap"><a class="back" href="index.html">← Tất cả dự án</a><article>
-<h1>${esc(p.title)}</h1>${p.tldr ? `<p class="lead">${p.tldrHtml}</p>` : ''}${p.html}</article></div>`;
+<h1>${mixTitle(p.title)}</h1>${p.tldr ? `<p class="lead">${p.tldrHtml}</p>` : ''}${p.html}</article></div>`;
   fs.writeFileSync(path.join(OUT, `${p.slug}.html`), themeShell(cfg, `${p.title} · ${cfg.title}`, p.plainTldr, inner, 'brands', { pid: p.slug }));
 }
 

@@ -3,8 +3,17 @@
 export const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 export const slugify = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D')
   .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-// chữ O được thay bằng O nghiêng, như trang tham khảo
-export const fancy = s => String(s).replace(/[Oo]|[&<>"]/g, m => /[Oo]/.test(m) ? `<span class="o">${m.toUpperCase()}</span>` : esc(m));
+// Tiêu đề kết hợp serif nghiêng (Playfair Display) + sans đậm hẹp (Anton): nửa đầu serif, nửa sau sans in hoa.
+const titleCase = t => t === t.toUpperCase() ? t.toLowerCase().replace(/(^|\s)(\S)/g, (m, a, b) => a + b.toUpperCase()) : t;
+export const mixTitle = (s, mode) => {
+  s = String(s).trim();
+  const w = s.split(/\s+/);
+  if (mode === 'se') return `<span class="se">${esc(titleCase(s))}</span>`;
+  if (mode === 'sa' || w.length < 2) return `<span class="sa">${esc(s)}</span>`;
+  const k = Math.floor(w.length / 2);
+  return `<span class="se">${esc(titleCase(w.slice(0, k).join(' ')))}</span> <span class="sa">${esc(w.slice(k).join(' '))}</span>`;
+};
+export const fancy = s => mixTitle(s);
 
 export const emptyEdits = () => ({ brandNames: {}, brandOrder: [], groupNames: {}, groupOrder: [], groupNew: {}, groupMerged: {}, imageGroup: {}, imageOrder: {} });
 export const normEdits = d => { const e = emptyEdits(); for (const k of Object.keys(e)) if (d && d[k] && typeof d[k] === typeof e[k]) e[k] = d[k]; return e; };
@@ -54,7 +63,7 @@ export function indexHtml(groups) {
   const by = new Map();
   for (const g of groups) { const y = yearOf(g); if (!by.has(y)) by.set(y, []); by.get(y).push(g); }
   const years = [...by.keys()].sort((a, b) => a === 'Khác' ? 1 : b === 'Khác' ? -1 : b.localeCompare(a));
-  return '<div class="gtools" id="gtools"></div>' + years.map(y => `<h2 class="sec">${y === 'Khác' ? 'Khác' : 'Năm ' + y}</h2><div class="cgrid">${by.get(y).map(groupCard).join('')}</div>`).join('') + '<div style="height:48px"></div>';
+  return '<div class="gtools" id="gtools"></div>' + years.map(y => `<h2 class="sec">${mixTitle(y === 'Khác' ? 'Khác' : 'Năm ' + y)}</h2><div class="cgrid">${by.get(y).map(groupCard).join('')}</div>`).join('') + '<div style="height:48px"></div>';
 }
 
 // trang một nhóm

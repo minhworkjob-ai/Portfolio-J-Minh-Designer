@@ -13,6 +13,8 @@
   const toast = (m, ms = 4000) => { const t = $('#toast'); if (!t) return alert(m); t.textContent = m; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), ms); };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const slugify = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const tc = t => t === t.toUpperCase() ? t.toLowerCase().replace(/(^|\s)(\S)/g, (m, a, b) => a + b.toUpperCase()) : t;
+  const mixTitle = s => { const w = String(s).trim().split(/\s+/), k = Math.floor(w.length / 2); return w.length < 2 ? `<span class="sa">${esc(s)}</span>` : `<span class="se">${esc(tc(w.slice(0, k).join(' ')))}</span> <span class="sa">${esc(w.slice(k).join(' '))}</span>`; };
   const PAGE = document.body.dataset.page || '';
   const PID = document.body.dataset.pid || '';
   const SYNC = 'Web cập nhật sau khoảng 1 phút.';
@@ -152,7 +154,7 @@
       const n = ed.brandNames[slugOf(c)];
       if (n) { $('h3', c).textContent = n; c.dataset.label = n; if (!c.dataset.q0) c.dataset.q0 = c.dataset.q || ''; c.dataset.q = (n + ' ' + c.dataset.q0).toLowerCase(); }
     });
-    if (PID && ed.brandNames[PID]) { const h = $('article h1'); if (h) h.textContent = ed.brandNames[PID]; document.title = ed.brandNames[PID] + ' · ' + (S.title || ''); }
+    if (PID && ed.brandNames[PID]) { const h = $('article h1'); if (h) h.innerHTML = mixTitle(ed.brandNames[PID]); document.title = ed.brandNames[PID] + ' · ' + (S.title || ''); }
     const g = $('#g');
     if (g && ed.brandOrder.length) {
       const cards = $$('.card', g), rank = new Map(ed.brandOrder.map((k, i) => [k, i])), at = new Map(cards.map((c, i) => [c, i]));
