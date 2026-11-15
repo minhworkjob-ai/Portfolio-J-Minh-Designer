@@ -1,6 +1,6 @@
 {
-  "title": "Portfolio Thiết Kế",
-  "subtitle": "Sản phẩm thiết kế và bộ nhận diện các thương hiệu",
+  "title": "J Minh Designer",
+  "subtitle": "Thiết kế nhận diện thương hiệu và ấn phẩm, từ ý tưởng đến sản phẩm hoàn thiện.",
   "vault": "../Obsidian Vault",
   "include": [
     "wiki/Wiivent Project/Thương Hiệu Thành Viên"
@@ -38,5 +38,10 @@
       "Ticket.jpg",
       "Ve-may-bay.jpg"
     ]
-  }
+  },
+  "repo": "minhworkjob-ai/Portfolio-J-Minh-Designer",
+  "branch": "main",
+  "heroLine1": "J MINH",
+  "heroLine2": "DESIGNER",
+  "heroLine3": ".2026"
 }

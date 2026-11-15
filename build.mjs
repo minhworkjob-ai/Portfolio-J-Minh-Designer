@@ -6,13 +6,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { shell as themeShell } from './theme.mjs';
+import { shell as themeShell, hero, pageHead, writeSiteAssets, readDeleted } from './theme.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'site.config.json'), 'utf8'));
 const VAULT = path.resolve(process.env.VAULT || path.resolve(ROOT, cfg.vault));
 const OUT = path.join(ROOT, cfg.out);
 const ASSETS = path.join(OUT, 'assets');
+const DEL = readDeleted(OUT);
 
 if (!fs.existsSync(path.join(VAULT, '.obsidian'))) {
   console.error('Không thấy vault Obsidian tại:', VAULT);
@@ -57,6 +58,7 @@ for (const file of walk(VAULT)) {
   const name = path.basename(file, '.md');
   const { fm, body } = parseFrontmatter(fs.readFileSync(file, 'utf8'));
   if (String(fm.publish) === 'false') continue;
+  if (DEL.projects.includes(slugify(name))) continue;
   if (cfg.excludeNamePrefixes.some(p => name.startsWith(p))) continue;
   const inFolder = includeDirs.some(d => file.startsWith(d));
   if (!inFolder && String(fm.publish) !== 'true') continue;
@@ -70,6 +72,7 @@ for (const p of pages) for (const n of [p.name, ...p.aliases]) byName.set(n.toLo
 // ---------- ảnh ----------
 fs.mkdirSync(ASSETS, { recursive: true });
 fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
+writeSiteAssets(OUT);
 const copied = new Map();
 const usedNames = new Set();
 function useImage(rel) {
@@ -205,15 +208,15 @@ pages.forEach(prepare);
 const shell = (title, desc, inner) => themeShell(cfg, title, desc, inner, 'brands');
 
 // trang chủ
-const cards = pages.map(p => `
-<a class="card" href="${p.slug}.html" data-q="${esc((p.title + ' ' + p.plainTldr).toLowerCase())}">
+const cards = pages.map((p, i) => `
+<a class="card" href="${p.slug}.html" data-id="p:${p.slug}" data-files="${p.slug}.html" data-label="${esc(p.title)}" data-q="${esc((p.title + ' ' + p.plainTldr).toLowerCase())}">
   <div class="thumb${p.cover ? '' : ' empty'}">${p.cover ? `<img src="${p.cover}" alt="${esc(p.title)}" loading="lazy">` : esc(p.title[0] || '?')}</div>
-  <div class="meta"><h3>${esc(p.title)}</h3><p>${esc(p.plainTldr)}</p>
+  <div class="meta"><span class="no">${String(i + 1).padStart(2, '0')}/${String(pages.length).padStart(2, '0')}</span><h3>${esc(p.title)}</h3><p>${esc(p.plainTldr)}</p>
   <div class="dots">${p.hexes.map(h => `<i style="background:${h}" title="${h}"></i>`).join('')}</div></div>
 </a>`).join('');
 const home = shell(cfg.title, cfg.subtitle, `
-<div class="wrap"><header class="top"><h1>${esc(cfg.title)}</h1><p>${esc(cfg.subtitle)}</p>
-<div class="bar"><input id="q" type="search" placeholder="Tìm thương hiệu…" aria-label="Tìm"><span class="count" id="n">${pages.length} dự án</span></div></header>
+${hero(cfg)}
+<div class="wrap" id="work"><div class="secbar"><span>Thương hiệu</span><input id="q" type="search" placeholder="Tìm thương hiệu…" aria-label="Tìm"><span id="n">${pages.length} dự án</span></div>
 <main class="grid" id="g">${cards}</main></div>
 <script>
 const q=document.getElementById('q'),n=document.getElementById('n'),cs=[...document.querySelectorAll('.card')];
@@ -221,15 +224,30 @@ q.addEventListener('input',()=>{const v=q.value.trim().toLowerCase();let c=0;cs.
 </script>`);
 fs.writeFileSync(path.join(OUT, 'index.html'), home);
 
+// trang đăng nhập
+const loginHtml = shell('Đăng nhập · ' + cfg.title, 'Đăng nhập quản trị', `
+<div class="wrap"><div class="login"><h1>Đăng nhập</h1>
+<p>Chỉ chủ website mới xoá được dự án và ấn phẩm. Đăng nhập bằng GitHub token của bạn (chỉ lưu trong trình duyệt này, không gửi đi đâu ngoài GitHub).</p>
+<form id="loginform" autocomplete="off"><label for="tok">GitHub token</label><input id="tok" type="password" placeholder="github_pat_…" spellcheck="false">
+<div class="row"><input type="checkbox" id="remember"><label for="remember" style="margin:0;text-transform:none;letter-spacing:0">Ghi nhớ trên máy này</label></div>
+<button class="btn" type="submit">Đăng nhập</button> <button class="btn ghost" type="button" id="logout" style="display:none">Đăng xuất</button>
+<div class="msg" id="loginmsg"></div></form>
+<h2 style="font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-top:46px">Lấy token (một lần)</h2>
+<ol><li>Mở <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
+<li>Repository access: <b>Only select repositories</b> → chọn repo ${esc(cfg.repo.split('/')[1])}.</li>
+<li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
+<li>Generate token, chép dán vào ô trên.</li></ol></div></div>`, 'admin');
+fs.writeFileSync(path.join(OUT, 'admin.html'), loginHtml);
+
 // trang chi tiết
 for (const p of pages) {
   const inner = `<div class="wrap"><a class="back" href="index.html">← Tất cả dự án</a><article>
 <h1>${esc(p.title)}</h1>${p.tldr ? `<p class="lead">${p.tldrHtml}</p>` : ''}${p.html}</article></div>`;
-  fs.writeFileSync(path.join(OUT, `${p.slug}.html`), shell(`${p.title} · ${cfg.title}`, p.plainTldr, inner));
+  fs.writeFileSync(path.join(OUT, `${p.slug}.html`), themeShell(cfg, `${p.title} · ${cfg.title}`, p.plainTldr, inner, 'brands', { pid: p.slug }));
 }
 
 // báo file cũ không còn được tạo (không tự xoá)
-const made = new Set(['index.html', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
+const made = new Set(['index.html', 'admin.html', 'site.js', 'deleted.json', '.nojekyll', ...pages.map(p => p.slug + '.html'), ...[...copied.values()].filter(Boolean)]);
 const stale = [];
 (function scan(d, rel = '') { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) scan(path.join(d, e.name), r); else if (!made.has(r) && !/^(gallery\/|gallery\.html|g-)/.test(r)) stale.push(r); } })(OUT);
 if (stale.length) console.log('File cũ có thể xoá tay:', stale.join(', '));
