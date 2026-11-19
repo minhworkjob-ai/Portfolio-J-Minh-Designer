@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { esc, fancy, mixTitle, emptyEdits, normEdits } from './render.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
+const MV_VER = '4.0.0';  // phiên bản <model-viewer> (Google) cho model 3D ở hero
 const V = Date.now().toString(36);   // số phiên bản cho script: mỗi lần build trình duyệt tải bản mới
 export { fancy, mixTitle };
 
@@ -72,6 +73,7 @@ h1,h2,h3,h6,.mega,.menu a,.modal h3,.mq{font-family:"Host Grotesk VN","Bai Jamju
 .hero{position:relative;min-height:100svh;overflow:hidden;display:flex;align-items:flex-end;padding:96px 0 110px}
 .redpanel{position:absolute;top:0;left:13%;width:min(62vw,560px);height:78%;background:linear-gradient(#0b0b0b 0%,#7a0a05 38%,var(--red) 100%);border-radius:0 0 22px 22px;overflow:hidden;transform-origin:top}
 .redpanel img{position:absolute;bottom:0;left:50%;height:92%;width:auto;max-width:none;transform:translateX(-50%);filter:contrast(1.05)}
+.redpanel .hero3d{position:absolute;left:0;right:0;bottom:2%;top:12%;width:100%;height:auto;background:transparent;--poster-color:transparent;--progress-bar-color:transparent;outline:none}
 .hero .wrap{position:relative;width:100%}
 .tag{display:flex;gap:26px;align-items:center;padding-bottom:26px;margin-bottom:22px;border-bottom:1px solid var(--line);max-width:760px;margin-left:auto}
 .tag p{margin:0;font-size:clamp(16px,2.2vw,22px);line-height:1.35;max-width:520px}
@@ -260,8 +262,11 @@ body.selecting .masonry a{cursor:pointer}body.selecting .del{display:none}
 .fx-ready .redpanel{transform:none;transition:transform 1.3s cubic-bezier(.16,1,.3,1)}
 .fx .redpanel img{opacity:0;margin-bottom:-40px}
 .fx-ready .redpanel img{opacity:1;margin-bottom:0;transition:opacity 1.2s .5s,margin 1.4s .5s cubic-bezier(.16,1,.3,1)}
-.fx-off .ch,.fx-off .rv,.fx-off .redpanel,.fx-off .redpanel img{transform:none!important;opacity:1!important;margin:0!important}
+.fx .redpanel .hero3d{opacity:0;top:20%;bottom:-6%}
+.fx-ready .redpanel .hero3d{opacity:1;top:12%;bottom:2%;transition:opacity 1.2s .5s,top 1.4s .5s cubic-bezier(.16,1,.3,1),bottom 1.4s .5s cubic-bezier(.16,1,.3,1)}
+.fx-off .ch,.fx-off .rv,.fx-off .redpanel,.fx-off .redpanel img,.fx-off .redpanel .hero3d{transform:none!important;opacity:1!important;margin:0!important}
 .fx-off .redpanel img{transform:translateX(-50%)!important}
+.fx-off .redpanel .hero3d{top:12%!important;bottom:2%!important}
 .menu.on a,.menu.on small{animation:mrise .8s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0)*80ms + 80ms)}
 @keyframes mrise{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:none}}
 .cursor-dot{position:fixed;left:0;top:0;z-index:90;width:16px;height:16px;border-radius:50%;background:var(--red);pointer-events:none;opacity:0;mix-blend-mode:difference;transition:opacity .3s,width .25s,height .25s}
@@ -350,7 +355,18 @@ export const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"
 // trang chủ: hero lớn
 export function hero(cfg) {
   const img = cfg.heroImage ? `<img src="${esc(cfg.heroImage)}" alt="" data-speed="-0.06">` : '';
-  return `<section class="hero"><div class="redpanel">${img}</div><div class="wrap">
+  const h3 = cfg.hero3d;  // model 3D thay ảnh trong khối đỏ (xem models/README.md)
+  const mv = h3 && h3.src ? `<model-viewer class="hero3d" src="${esc(h3.src)}"${h3.poster ? ` poster="${esc(h3.poster)}"` : ''} alt="${esc(h3.alt || '')}"
+ environment-image="${esc(h3.env || 'neutral')}" tone-mapping="neutral" exposure="${esc(String(h3.exposure ?? 1.1))}" shadow-intensity="0.3" shadow-softness="1"
+ camera-orbit="-20deg 82deg auto" min-camera-orbit="auto 60deg auto" max-camera-orbit="auto 100deg auto" field-of-view="26deg"
+ data-sway="${esc(String(h3.sway ?? 28))}" camera-controls disable-zoom disable-pan interaction-prompt="none" touch-action="pan-y" data-speed="-0.06"></model-viewer>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@${MV_VER}/dist/model-viewer.min.js"></script>
+<script>/* lắc chữ qua lại ±sway độ (luôn đọc được chữ), tạm dừng khi người xem kéo xoay, dừng khi cuộn khỏi hero hoặc khi bật giảm chuyển động */
+(function(){var m=document.querySelector('.hero3d');if(!m||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var a=Number(m.dataset.sway)||28,t0=performance.now(),hold=0;
+m.addEventListener('camera-change',function(e){if(e.detail.source==='user-interaction')hold=performance.now()+2500});
+(function f(t){if(t>hold&&m.loaded&&scrollY<innerHeight)m.cameraOrbit=(-12+a*Math.sin((t-t0)/2600)).toFixed(2)+'deg 82deg auto';requestAnimationFrame(f)})(t0)})()</script>` : '';
+  return `<section class="hero"><div class="redpanel">${mv || img}</div><div class="wrap">
 <div class="tag">${STAR}<p>${esc(cfg.subtitle)}</p></div>
 <h1 class="mega" data-speed="0.1">${fancy(cfg.heroLine1 || 'MY')}<br>${fancy(cfg.heroLine2 || 'PORTFOLIO')}<br><span class="r">${fancy(cfg.heroLine3 || '.2026')}</span></h1>
 </div></section>`;
@@ -437,6 +453,9 @@ export function writeSiteAssets(outDir) {
   fs.copyFileSync(path.join(HERE, 'carousel.js'), path.join(outDir, 'carousel.js'));
   fs.mkdirSync(path.join(outDir, 'fonts'), { recursive: true });   // Host Grotesk VN + giấy phép OFL
   for (const f of fs.readdirSync(path.join(HERE, 'fonts'))) if (/\.(woff2|txt|md)$/.test(f)) fs.copyFileSync(path.join(HERE, 'fonts', f), path.join(outDir, 'fonts', f));
+  const md = path.join(HERE, 'models');  // model 3D (.glb), poster (.webp), ánh sáng studio (.jpg)
+  if (fs.existsSync(md)) { fs.mkdirSync(path.join(outDir, 'models'), { recursive: true });
+    for (const f of fs.readdirSync(md)) if (/\.(glb|webp|jpg|md)$/.test(f)) fs.copyFileSync(path.join(md, f), path.join(outDir, 'models', f)); }
   const hp = path.join(outDir, 'hero.svg');  // ảnh tạm; muốn đổi ảnh thật, xem heroImage trong site.config.json
   if (!fs.existsSync(hp)) fs.copyFileSync(path.join(HERE, 'hero-placeholder.svg'), hp);
   const f = path.join(outDir, 'deleted.json');
