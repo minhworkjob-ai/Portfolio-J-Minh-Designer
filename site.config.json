@@ -45,6 +45,14 @@
   "heroLine2": "PORTFOLIO",
   "heroLine3": ".2026",
   "heroImage": "hero.svg",
+  "hero3d": {
+    "src": "models/m-host-grotesk-glass.glb",
+    "poster": "models/m-host-grotesk-glass-poster.webp",
+    "env": "models/studio-env.jpg",
+    "alt": "Chữ M 3D bằng kính, font Host Grotesk VN",
+    "exposure": 1.1,
+    "sway": 28
+  },
   "firebase": {
     "apiKey": "",
     "authDomain": "",
