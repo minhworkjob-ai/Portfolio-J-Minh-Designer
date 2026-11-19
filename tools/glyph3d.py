@@ -2,7 +2,7 @@
 
 Chạy:  python tools/glyph3d.py M models/m-host-grotesk.glb
 Tùy chọn: --font fonts/HostGroteskVN-Medium.woff2 --depth 0.32 --bevel 0.035 --steps 8
-          --color "#ff1d12" --metal 0.15 --rough 0.32
+          --preset red|chrome|glass|glass-real|white  (ghi đè: --color --metal --rough)
 
 Cần: pip install fonttools brotli trimesh shapely mapbox_earcut
 Chữ được đùn khối, bo cạnh tròn hai mặt (profile 1/4 hình tròn), chuẩn hoá cao 1 đơn vị, đặt giữa gốc toạ độ.
@@ -120,6 +120,46 @@ def build(shape, depth, bevel, steps):
     return m
 
 
+# chất liệu dựng sẵn; extensions = phần mở rộng glTF (model-viewer, three.js, Blender đều đọc được)
+PRESETS = {
+    'red':    dict(color='#ff1d12', metal=0.15, rough=0.32),
+    'chrome': dict(color='#f2f3f5', metal=1.0, rough=0.06),
+    # Liquid Glass cho web: kính trong pha alpha (thấy nền CSS phía sau như icon trên web),
+    # mép bắt sáng nhờ clearcoat + specular. Muốn kính khúc xạ thật để render Blender: --preset glass-real
+    'glass':  dict(color='#ffffff', alpha=0.22, metal=0.0, rough=0.05, ext={
+        'KHR_materials_clearcoat': {'clearcoatFactor': 1.0, 'clearcoatRoughnessFactor': 0.02},
+        'KHR_materials_ior': {'ior': 1.5},
+        'KHR_materials_specular': {'specularFactor': 1.0}}),
+    'glass-real': dict(color='#ffffff', metal=0.0, rough=0.12, ext={
+        'KHR_materials_transmission': {'transmissionFactor': 1.0},
+        'KHR_materials_ior': {'ior': 1.45},
+        'KHR_materials_volume': {'thicknessFactor': 0.32, 'attenuationDistance': 1.2,
+                                 'attenuationColor': [0.93, 0.95, 1.0]},
+        'KHR_materials_clearcoat': {'clearcoatFactor': 1.0, 'clearcoatRoughnessFactor': 0.04}}),
+    # nhựa trắng mờ (satin): nhám nhẹ, phủ một lớp bóng mỏng
+    'white':  dict(color='#ecebe7', metal=0.0, rough=0.62, ext={
+        'KHR_materials_clearcoat': {'clearcoatFactor': 0.35, 'clearcoatRoughnessFactor': 0.3}}),
+}
+
+
+def patch_glb(path, ext):
+    """Gắn extension chất liệu vào JSON chunk của file GLB."""
+    import json, struct
+    data = open(path, 'rb').read()
+    jlen = struct.unpack_from('<I', data, 12)[0]
+    doc = json.loads(data[20:20 + jlen])
+    rest = data[20 + jlen:]
+    for m in doc['materials']:
+        m.setdefault('extensions', {}).update(ext)
+        if 'KHR_materials_transmission' in ext:
+            m['alphaMode'] = 'OPAQUE'
+    doc['extensionsUsed'] = sorted(set(doc.get('extensionsUsed', [])) | set(ext))
+    j = json.dumps(doc, separators=(',', ':')).encode()
+    j += b' ' * (-len(j) % 4)
+    total = 12 + 8 + len(j) + len(rest)
+    open(path, 'wb').write(struct.pack('<III', 0x46546C67, 2, total) + struct.pack('<II', len(j), 0x4E4F534A) + j + rest)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('char'); ap.add_argument('out')
@@ -127,10 +167,13 @@ def main():
     ap.add_argument('--depth', type=float, default=0.32)
     ap.add_argument('--bevel', type=float, default=0.035)
     ap.add_argument('--steps', type=int, default=8)
-    ap.add_argument('--color', default='#ff1d12')
-    ap.add_argument('--metal', type=float, default=0.15)
-    ap.add_argument('--rough', type=float, default=0.32)
+    ap.add_argument('--preset', choices=sorted(PRESETS), default='red')
+    ap.add_argument('--color'); ap.add_argument('--metal', type=float); ap.add_argument('--rough', type=float)
     a = ap.parse_args()
+    pr = PRESETS[a.preset]
+    color = a.color or pr['color']
+    metal = pr['metal'] if a.metal is None else a.metal
+    rough = pr['rough'] if a.rough is None else a.rough
 
     shape = glyph_shape(a.font, a.char)
     minx, miny, maxx, maxy = shape.bounds
@@ -143,13 +186,15 @@ def main():
     # tách mặt phẳng và cạnh bo bằng smoothing theo góc để bóng đổ sắc nét ở thành, mượt ở bo
     mesh = trimesh.graph.smooth_shade(mesh, angle=math.radians(35))
     # glTF lưu màu ở không gian linear: đổi từ mã hex sRGB
-    srgb = [int(a.color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    srgb = [int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
     rgb = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in srgb]
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
-        name='glyph', baseColorFactor=[*rgb, 1.0], metallicFactor=a.metal, roughnessFactor=a.rough))
+        name=f'glyph-{a.preset}', baseColorFactor=[*rgb, pr.get('alpha', 1.0)],
+        alphaMode='BLEND' if pr.get('alpha', 1.0) < 1 else 'OPAQUE', metallicFactor=metal, roughnessFactor=rough))
     # GLB dùng trục Y hướng lên: chữ đã nằm trên mặt XY, mặt trước nhìn về +Z
     mesh.export(a.out)
-    print(f'{a.out}: {len(mesh.vertices)} đỉnh, {len(mesh.faces)} mặt, kín nước={mesh.is_watertight}')
+    if pr.get('ext'): patch_glb(a.out, pr['ext'])
+    print(f'{a.out}: {a.preset}, {len(mesh.vertices)} đỉnh, {len(mesh.faces)} mặt, kín nước={mesh.is_watertight}')
 
 
 if __name__ == '__main__':
